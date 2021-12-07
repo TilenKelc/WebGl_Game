@@ -1,35 +1,49 @@
 import { vec3, mat4, quat } from '../../lib/gl-matrix-module.js';
 
-import { Utils } from './Utils.js';
-
 export class Node {
 
-    constructor(options) {
-        Utils.init(this, Node.defaults, options);
+    constructor(options = {}) {
+        this.translation = options.translation
+            ? vec3.clone(options.translation)
+            : vec3.fromValues(0, 0, 0);
+        this.rotation = options.rotation
+            ? quat.clone(options.rotation)
+            : quat.fromValues(0, 0, 0);
+        this.scale = options.scale
+            ? vec3.clone(options.scale)
+            : vec3.fromValues(1, 1, 1);
+        this.matrix = options.matrix
+            ? mat4.clone(options.matrix)
+            : mat4.create();
 
-        this.transform = mat4.create();
-        this.updateTransform();
+        if (options.matrix) {
+            this.updateTransform();
+        } else if (options.translation || options.rotation || options.scale) {
+            this.updateMatrix();
+        }
 
-        this.children = [];
+        this.camera = options.camera || null;
+        this.mesh = options.mesh || null;
+
+        this.children = [...(options.children || [])];
+        for (const child of this.children) {
+            child.parent = this;
+        }
         this.parent = null;
     }
 
     updateTransform() {
-        const t = this.transform;
-        const degrees = this.rotation.map(x => x * 180 / Math.PI);
-        const q = quat.fromEuler(quat.create(), ...degrees);
-        const v = vec3.clone(this.translation);
-        const s = vec3.clone(this.scale);
-        mat4.fromRotationTranslationScale(t, q, v, s);
+        mat4.getRotation(this.rotation, this.matrix);
+        mat4.getTranslation(this.translation, this.matrix);
+        mat4.getScaling(this.scale, this.matrix);
     }
 
-    getGlobalTransform() {
-        if (!this.parent) {
-            return mat4.clone(this.transform);
-        } else {
-            let transform = this.parent.getGlobalTransform();
-            return mat4.mul(transform, transform, this.transform);
-        }
+    updateMatrix() {
+        mat4.fromRotationTranslationScale(
+            this.matrix,
+            this.rotation,
+            this.translation,
+            this.scale);
     }
 
     addChild(node) {
@@ -45,26 +59,11 @@ export class Node {
         }
     }
 
-    traverse(before, after) {
-        if (before) {
-            before(this);
-        }
-        for (let child of this.children) {
-            child.traverse(before, after);
-        }
-        if (after) {
-            after(this);
-        }
+    clone() {
+        return new Node({
+            ...this,
+            children: this.children.map(child => child.clone()),
+        });
     }
 
 }
-
-Node.defaults = {
-    translation: [0, 0, 0],
-    rotation: [0, 0, 0],
-    scale: [1, 1, 1],
-    aabb: {
-        min: [0, 0, 0],
-        max: [0, 0, 0],
-    },
-};
