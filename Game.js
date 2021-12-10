@@ -18,12 +18,14 @@ class App extends Application {
         this.keydownHandler = this.keydownHandler.bind(this);
         this.keyupHandler = this.keyupHandler.bind(this);
         this.mouseZoomHandler = this.mouseZoomHandler.bind(this);
+        this.mouseClickHandler = this.mouseClickHandler.bind(this);
         this.keys = {};
 
         document.addEventListener('pointerlockchange', this.pointerlockchangeHandler);
         document.addEventListener('keydown', this.keydownHandler);
         document.addEventListener('keyup', this.keyupHandler);
         document.addEventListener('wheel', this.mouseZoomHandler);
+        document.addEventListener('click', this.mouseClickHandler);
     }
 
     async start() {
@@ -32,7 +34,7 @@ class App extends Application {
         this.initHandlers();
 
         this.loader = new GLTFLoader();
-        await this.loader.load('../../common/models/scene/example_scene.gltf');
+        await this.loader.load('../../common/models/scene/scene.gltf');
 
         this.scene = await this.loader.loadScene(this.loader.defaultScene);
         
@@ -66,15 +68,11 @@ class App extends Application {
         this.resize();  
 
         //this.camera.matrix = mat4.clone(this.plane.matrix);
-        //this.camera.updateTransform();
+        //this.camera.rotation = quat.clone(this.plane.rotation);
+        //this.camera.translation = vec3.clone(this.plane.translation);
         
-        //console.log(this.camera.matrix);
-        mat4.fromTranslation(this.camera.matrix, vec3.fromValues(0, 0, 5));
-
-        //console.log(this.camera.matrix);
-        
-        //this.camera.matrix = mat4.fromTranslation(this.camera.matrix, [7, 5, 10]);
         this.scale = 10;
+        this.fire = false;
         console.log(this.scene);
     }
 
@@ -90,6 +88,9 @@ class App extends Application {
             //console.log(this.plane.matrix);
             //console.log("camera")
             //console.log(this.camera.matrix);
+        }
+        if(this.fire){
+
         }
     }
 
@@ -155,7 +156,11 @@ class App extends Application {
 
     mouseZoomHandler(e){
         this.scale += e.deltaY * -0.01;
-        this.scale = Math.min(Math.max(5, this.scale), 10);
+        this.scale = Math.min(Math.max(5, this.scale), 100);
+    }
+
+    mouseClickHandler(e){
+        this.fire = true;
     }
 }
 

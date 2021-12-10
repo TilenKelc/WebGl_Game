@@ -8,7 +8,7 @@ export class Node {
             : vec3.fromValues(0, 0, 0);
         this.rotation = options.rotation
             ? quat.clone(options.rotation)
-            : quat.fromValues(0, 0, 0);
+            : quat.fromValues(0, 0, 0, 0);
         this.scale = options.scale
             ? vec3.clone(options.scale)
             : vec3.fromValues(1, 1, 1);

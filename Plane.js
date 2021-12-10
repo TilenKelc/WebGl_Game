@@ -1,4 +1,4 @@
-import { mat4, vec3 } from '../../lib/gl-matrix-module.js';
+import { mat4, vec3, quat } from '../../lib/gl-matrix-module.js';
 import { Node } from './Node.js';
 
 export class Plane extends Node{
@@ -13,53 +13,70 @@ export class Plane extends Node{
         this.friction = 0.2;
         this.acceleration = 20;
 
-        this.roll = 0;
+        this.yawSensitivity = 0.02;
+        this.yaw = 0;
         this.pitch = 0;
 
     }
 
     update(dt, keys){
-        this.keys = keys;
         const c = this;
     
+        
         const forward = vec3.set(vec3.create(),
             -Math.sin(c.rotation[1]), 0, -Math.cos(c.rotation[1]));
         const right = vec3.set(vec3.create(),
              Math.cos(c.rotation[1]), 0, -Math.sin(c.rotation[1]));
             
-        const up = vec3.set(vec3.create(),
-            -Math.sin(c.rotation[1]), -Math.sin(c.rotation[0]), -Math.cos(c.rotation[1]));
+        //const up = vec3.set(vec3.create(),
+        //    -Math.sin(c.rotation[1]), , -Math.cos(c.rotation[1]));
     
 
 
         // 1: add movement acceleration
         let acc = vec3.create();
-        if(this.keys['Space']){
+        if(keys['Space']){
             vec3.add(acc, acc, forward);
         }
-        if(this.keys['KeyW']){
-            vec3.add(acc, acc, up);
+        if(keys['KeyW']){
+            vec3.add(acc, acc, forward);
         }
-        if(this.keys['KeyS']){
+        if(keys['KeyS']){
             vec3.sub(acc, acc, forward);
         }
-        if(this.keys['KeyD']){
+        if(keys['KeyD']){
             vec3.add(acc, acc, right);
         }
-        if(this.keys['KeyA']){
-            //console.log(acc);
-            //console.log(acc);
-        }
+        
+        
+        if(keys['KeyQ']){
+            /*
+            if(this.roll < 30){
+                mat4.rotateX(c.matrix, c.matrix, this.roll * 0.001);
+                c.updateTransform();
+                this.roll += 1;
+            }*/
+            mat4.rotateZ(c.matrix, c.matrix, this.yawSensitivity);
+            c.updateTransform();
+        }/*else{
+            if(this.roll > 0){
+                mat4.rotateX(c.matrix, c.matrix, -this.roll * 0.001);
+                c.updateTransform();
+                this.roll -= 1;
+            } 
+        }*/
+        
+
 
         // 2: update velocity
         vec3.scaleAndAdd(c.velocity, c.velocity, acc, dt * c.acceleration);
 
         // 3: if no movement, apply friction
-        if (!this.keys['KeyW'] &&
-            !this.keys['KeyS'] &&
-            !this.keys['KeyD'] &&
-            !this.keys['KeyA'] &&
-            !this.keys['Space'])
+        if (!keys['KeyW'] &&
+            !keys['KeyS'] &&
+            !keys['KeyD'] &&
+            !keys['KeyA'] &&
+            !keys['Space'])
         {
             vec3.scale(c.velocity, c.velocity, 1 - c.friction);
         }
@@ -75,9 +92,6 @@ export class Plane extends Node{
         //vec3.scaleAndAdd(c.rotation, c.rotation, c.velocity, dt);
     
         // 6: update the final transform
-        mat4.fromTranslation(c.matrix, c.translation);
-        //mat4.rotateX(t, t, c.rotation[2]);
-        //mat4.rotateY(t, t, 1);
-
+        mat4.fromRotationTranslationScale(c.matrix, c.rotation, c.translation, c.scale);
     }
 }

@@ -277,7 +277,7 @@ export class GLTFLoader {
             options.mesh = await this.loadMesh(gltfSpec.mesh);
         }
         
-        if(options.name == "fighter_ship"){
+        if(options.name == "fighter"){
             const node = new Plane(options);
             this.cache.set(gltfSpec, node);
             return node;
