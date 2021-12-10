@@ -17,11 +17,13 @@ class App extends Application {
         this.mousemoveHandler = this.mousemoveHandler.bind(this);
         this.keydownHandler = this.keydownHandler.bind(this);
         this.keyupHandler = this.keyupHandler.bind(this);
+        this.mouseZoomHandler = this.mouseZoomHandler.bind(this);
         this.keys = {};
 
         document.addEventListener('pointerlockchange', this.pointerlockchangeHandler);
         document.addEventListener('keydown', this.keydownHandler);
         document.addEventListener('keyup', this.keyupHandler);
+        document.addEventListener('wheel', this.mouseZoomHandler);
     }
 
     async start() {
@@ -48,8 +50,7 @@ class App extends Application {
         this.time = Date.now();
         this.startTime = this.time;
 
-        this.camera = new Node();
-        this.camera.camera = new Camera();
+        this.camera = new Camera();
         this.scene.addNode(this.camera);
         
         //find plane node
@@ -62,11 +63,19 @@ class App extends Application {
 
         this.renderer = new Renderer(this.gl);
         this.renderer.prepareScene(this.scene);
-        this.resize();
+        this.resize();  
 
+        //this.camera.matrix = mat4.clone(this.plane.matrix);
+        //this.camera.updateTransform();
+        
+        //console.log(this.camera.matrix);
+        mat4.fromTranslation(this.camera.matrix, vec3.fromValues(0, 0, 5));
+
+        //console.log(this.camera.matrix);
+        
+        //this.camera.matrix = mat4.fromTranslation(this.camera.matrix, [7, 5, 10]);
+        this.scale = 10;
         console.log(this.scene);
-        console.log(vec3);
-        console.log(mat4);
     }
 
     update(){
@@ -75,7 +84,12 @@ class App extends Application {
         this.startTime = this.time;
 
         if(this.plane){                     
-            this.plane.update(dt, this.keys);        
+            this.plane.update(dt, this.keys);     
+            this.camera.update(this.plane, this.scale);
+            //console.log("plane"); 
+            //console.log(this.plane.matrix);
+            //console.log("camera")
+            //console.log(this.camera.matrix);
         }
     }
 
@@ -91,8 +105,8 @@ class App extends Application {
         const aspectRatio = w / h;
 
         if (this.camera) {
-            this.camera.camera.aspect = aspectRatio;
-            this.camera.camera.updateMatrix();
+            this.camera.aspect = aspectRatio;
+            this.camera.updateProjection();
         }
     }
 
@@ -111,7 +125,7 @@ class App extends Application {
     mousemoveHandler(e) {
         const dx = e.movementX;
         const dy = e.movementY;
-        const c = this.camera;
+        const c = this.plane;
         c.rotation[0] -= dy * c.mouseSensitivity;
         c.rotation[1] -= dx * c.mouseSensitivity;
 
@@ -137,6 +151,11 @@ class App extends Application {
 
     keyupHandler(e) {
         this.keys[e.code] = false;
+    }
+
+    mouseZoomHandler(e){
+        this.scale += e.deltaY * -0.01;
+        this.scale = Math.min(Math.max(5, this.scale), 10);
     }
 }
 

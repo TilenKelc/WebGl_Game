@@ -75,10 +75,8 @@ export class Plane extends Node{
         //vec3.scaleAndAdd(c.rotation, c.rotation, c.velocity, dt);
     
         // 6: update the final transform
-        const t = c.matrix;
-        mat4.identity(t);
-        mat4.translate(t, t, c.translation);
-        mat4.rotateX(t, t, c.rotation[2]);
+        mat4.fromTranslation(c.matrix, c.translation);
+        //mat4.rotateX(t, t, c.rotation[2]);
         //mat4.rotateY(t, t, 1);
 
     }
