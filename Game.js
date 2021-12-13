@@ -26,6 +26,8 @@ class App extends Application {
         document.addEventListener('keyup', this.keyupHandler);
         document.addEventListener('wheel', this.mouseZoomHandler);
         document.addEventListener('click', this.mouseClickHandler);
+
+        this.cameraAngle = 0;
     }
 
     async start() {
@@ -35,19 +37,9 @@ class App extends Application {
 
         this.loader = new GLTFLoader();
         await this.loader.load('../../common/models/scene/scene.gltf');
+        //await this.loader.load('../../common/models/monkey/monkey.gltf');
 
         this.scene = await this.loader.loadScene(this.loader.defaultScene);
-        
-        /*
-        this.camera = await this.loader.loadNode('Camera');
-
-        if (!this.scene || !this.camera) {
-            throw new Error('Scene or Camera not present in glTF');
-        }
-
-        if (!this.camera.camera) {
-            throw new Error('Camera node does not contain a camera reference');
-        }*/
         
         this.time = Date.now();
         this.startTime = this.time;
@@ -71,8 +63,10 @@ class App extends Application {
         //this.camera.rotation = quat.clone(this.plane.rotation);
         //this.camera.translation = vec3.clone(this.plane.translation);
         
-        this.scale = 10;
         this.fire = false;
+        this.plane.matrix = mat4.create();
+        //this.scene.nodes[1].translation = vec3.fromValues(0,0,-10);
+        //this.scene.nodes[1].updateMatrix();
         console.log(this.scene);
     }
 
@@ -83,7 +77,8 @@ class App extends Application {
 
         if(this.plane){                     
             this.plane.update(dt, this.keys);     
-            this.camera.update(this.plane, this.scale);
+            this.camera.update(this.plane);
+            //this.cameraAngle * Math.PI / 180
             //console.log("plane"); 
             //console.log(this.plane.matrix);
             //console.log("camera")
@@ -124,26 +119,15 @@ class App extends Application {
     }
 
     mousemoveHandler(e) {
+        const c = this.camera;
         const dx = e.movementX;
         const dy = e.movementY;
-        const c = this.plane;
-        c.rotation[0] -= dy * c.mouseSensitivity;
-        c.rotation[1] -= dx * c.mouseSensitivity;
 
-        const pi = Math.PI;
-        const twopi = pi * 2;
-        const halfpi = pi / 2;
+        let pitchChange = dy * c.mouseSensitivity;
+        c.pitch -= pitchChange;
 
-        // Limit pitch
-        if (c.rotation[0] > halfpi) {
-            c.rotation[0] = halfpi;
-        }
-        if (c.rotation[0] < -halfpi) {
-            c.rotation[0] = -halfpi;
-        }
-
-        // Constrain yaw to the range [0, pi * 2]
-        c.rotation[1] = ((c.rotation[1] % twopi) + twopi) % twopi;
+        let yawChange = dx * c.mouseSensitivity;
+        c.yaw -= yawChange;
     }
 
     keydownHandler(e) {
@@ -155,8 +139,11 @@ class App extends Application {
     }
 
     mouseZoomHandler(e){
-        this.scale += e.deltaY * -0.01;
-        this.scale = Math.min(Math.max(5, this.scale), 100);
+        const c = this.camera;
+        let scale = c.distance;
+
+        scale += e.deltaY * -0.01;
+        c.distance = Math.min(Math.max(5, scale), 20);
     }
 
     mouseClickHandler(e){
@@ -168,4 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.querySelector('canvas');
     const app = new App(canvas);
     const gui = new GUI();
-    gui.add(app, 'enableMouseLook');});
+    gui.add(app, 'cameraAngle', -360, 360);
+    gui.add(app, 'enableMouseLook');
+});
