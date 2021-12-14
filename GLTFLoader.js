@@ -9,6 +9,7 @@ import { Camera } from './Camera.js';
 import { Node } from './Node.js';
 import { Scene } from './Scene.js';
 import { Plane } from './Plane.js';
+import { Box } from './Box.js';
 
 // This class loads all GLTF resources and instantiates
 // the corresponding classes. Keep in mind that it loads
@@ -279,6 +280,10 @@ export class GLTFLoader {
         
         if(options.name == "fighter"){
             const node = new Plane(options);
+            this.cache.set(gltfSpec, node);
+            return node;
+        }else if(options.name == "Cube"){
+            const node = new Box(options);
             this.cache.set(gltfSpec, node);
             return node;
         }else{

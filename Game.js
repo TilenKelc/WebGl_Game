@@ -8,6 +8,8 @@ import { Renderer } from './Renderer.js';
 
 import { mat4, vec3, quat } from '../../lib/gl-matrix-module.js';
 import { Plane } from './Plane.js';
+import { Box } from './Box.js';
+import { BoxManager } from './BoxManager.js';
 
 
 class App extends Application {
@@ -26,8 +28,6 @@ class App extends Application {
         document.addEventListener('keyup', this.keyupHandler);
         document.addEventListener('wheel', this.mouseZoomHandler);
         document.addEventListener('click', this.mouseClickHandler);
-
-        this.cameraAngle = 0;
     }
 
     async start() {
@@ -37,7 +37,6 @@ class App extends Application {
 
         this.loader = new GLTFLoader();
         await this.loader.load('../../common/models/scene/scene.gltf');
-        //await this.loader.load('../../common/models/monkey/monkey.gltf');
 
         this.scene = await this.loader.loadScene(this.loader.defaultScene);
         
@@ -47,7 +46,7 @@ class App extends Application {
         this.camera = new Camera();
         this.scene.addNode(this.camera);
         
-        //find plane node
+        // find plane
         this.plane = null;
         this.scene.traverse(node => {
             if (node instanceof Plane) {
@@ -55,18 +54,22 @@ class App extends Application {
             }
         });
 
+        // find box
+        this.boxManager = new BoxManager();
+        let box = null;
+        this.scene.traverse(node => {
+            if (node instanceof Box) {
+                box = node;
+            }
+        });
+        this.boxManager.mesh = box.mesh;
+        console.log(this.boxManager)
         this.renderer = new Renderer(this.gl);
         this.renderer.prepareScene(this.scene);
         this.resize();  
 
-        //this.camera.matrix = mat4.clone(this.plane.matrix);
-        //this.camera.rotation = quat.clone(this.plane.rotation);
-        //this.camera.translation = vec3.clone(this.plane.translation);
-        
-        this.fire = false;
-        this.plane.matrix = mat4.create();
-        //this.scene.nodes[1].translation = vec3.fromValues(0,0,-10);
-        //this.scene.nodes[1].updateMatrix();
+        this.scene.removeNode(box);
+
         console.log(this.scene);
     }
 
@@ -78,14 +81,15 @@ class App extends Application {
         if(this.plane){                     
             this.plane.update(dt, this.keys);     
             this.camera.update(this.plane);
-            //this.cameraAngle * Math.PI / 180
-            //console.log("plane"); 
-            //console.log(this.plane.matrix);
-            //console.log("camera")
-            //console.log(this.camera.matrix);
         }
-        if(this.fire){
 
+        if(this.boxManager){
+            this.boxManager.update();
+
+            if(this.boxManager.drop){
+                this.boxManager.addBox(this.scene, this.plane);
+            }
+            this.boxManager.drop = false;
         }
     }
 
@@ -147,7 +151,10 @@ class App extends Application {
     }
 
     mouseClickHandler(e){
-        this.fire = true;
+        if(!this.boxManager.countDown){
+            this.boxManager.drop = true;
+            this.boxManager.countDown = true;
+        }
     }
 }
 
@@ -155,6 +162,5 @@ document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.querySelector('canvas');
     const app = new App(canvas);
     const gui = new GUI();
-    gui.add(app, 'cameraAngle', -360, 360);
     gui.add(app, 'enableMouseLook');
 });

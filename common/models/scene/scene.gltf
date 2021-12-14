@@ -6,13 +6,21 @@
     "scene" : 0,
     "scenes" : [
         {
+            "extras" : {
+                "glTF2ExportSettings" : {
+                    "export_cameras" : 1,
+                    "export_extras" : 1,
+                    "export_format" : "GLTF_SEPARATE"
+                }
+            },
             "name" : "Scene",
             "nodes" : [
                 1,
                 2,
                 3,
                 4,
-                5
+                5,
+                6
             ]
         }
     ],
@@ -98,6 +106,20 @@
                 0,
                 0.7071067094802856
             ]
+        },
+        {
+            "mesh" : 4,
+            "name" : "Cube",
+            "scale" : [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "translation" : [
+                0,
+                0,
+                -7.5472612380981445
+            ]
         }
     ],
     "cameras" : [
@@ -159,6 +181,18 @@
                 "metallicFactor" : 0.38095200061798096,
                 "roughnessFactor" : 0.8285714387893677
             }
+        },
+        {
+            "doubleSided" : true,
+            "name" : "Material.001",
+            "pbrMetallicRoughness" : {
+                "baseColorTexture" : {
+                    "index" : 4,
+                    "texCoord" : 0
+                },
+                "metallicFactor" : 0,
+                "roughnessFactor" : 0.5
+            }
         }
     ],
     "meshes" : [
@@ -217,6 +251,20 @@
                     "material" : 3
                 }
             ]
+        },
+        {
+            "name" : "Cube",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 14,
+                        "NORMAL" : 15,
+                        "TEXCOORD_0" : 16
+                    },
+                    "indices" : 17,
+                    "material" : 4
+                }
+            ]
         }
     ],
     "textures" : [
@@ -231,6 +279,9 @@
         },
         {
             "source" : 0
+        },
+        {
+            "source" : 1
         }
     ],
     "images" : [
@@ -238,6 +289,11 @@
             "mimeType" : "image/jpeg",
             "name" : "ColourPalette2",
             "uri" : "ColourPalette2.jpg"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "box",
+            "uri" : "box.png"
         }
     ],
     "accessors" : [
@@ -364,6 +420,40 @@
             "componentType" : 5123,
             "count" : 1212,
             "type" : "SCALAR"
+        },
+        {
+            "bufferView" : 14,
+            "componentType" : 5126,
+            "count" : 24,
+            "max" : [
+                1,
+                1,
+                1
+            ],
+            "min" : [
+                -1,
+                -1,
+                -1
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 15,
+            "componentType" : 5126,
+            "count" : 24,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 16,
+            "componentType" : 5126,
+            "count" : 24,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 17,
+            "componentType" : 5123,
+            "count" : 36,
+            "type" : "SCALAR"
         }
     ],
     "bufferViews" : [
@@ -436,11 +526,31 @@
             "buffer" : 0,
             "byteLength" : 2424,
             "byteOffset" : 357268
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 288,
+            "byteOffset" : 359692
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 288,
+            "byteOffset" : 359980
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 192,
+            "byteOffset" : 360268
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 72,
+            "byteOffset" : 360460
         }
     ],
     "buffers" : [
         {
-            "byteLength" : 359692,
+            "byteLength" : 360532,
             "uri" : "scene.bin"
         }
     ]
