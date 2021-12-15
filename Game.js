@@ -1,16 +1,16 @@
 import { Application } from '../../common/engine/Application.js';
+import { mat4, vec3, quat } from '../../lib/gl-matrix-module.js';
+
 import { GUI } from '../../lib/dat.gui.module.js';
 
 import { GLTFLoader } from './GLTFLoader.js';
 import { Camera } from './Camera.js';
-import { Node } from './Node.js';
 import { Renderer } from './Renderer.js';
 
-import { mat4, vec3, quat } from '../../lib/gl-matrix-module.js';
 import { Plane } from './Plane.js';
 import { Box } from './Box.js';
 import { BoxManager } from './BoxManager.js';
-
+import { Light } from './Light.js';
 
 class App extends Application {
 
@@ -28,6 +28,8 @@ class App extends Application {
         document.addEventListener('keyup', this.keyupHandler);
         document.addEventListener('wheel', this.mouseZoomHandler);
         document.addEventListener('click', this.mouseClickHandler);
+
+        this.light = new Light();
     }
 
     async start() {
@@ -39,12 +41,14 @@ class App extends Application {
         await this.loader.load('../../common/models/scene/scene.gltf');
 
         this.scene = await this.loader.loadScene(this.loader.defaultScene);
-        
+
         this.time = Date.now();
         this.startTime = this.time;
+        
 
         this.camera = new Camera();
         this.scene.addNode(this.camera);
+        this.scene.addNode(this.light);
         
         // find plane
         this.plane = null;
@@ -63,7 +67,7 @@ class App extends Application {
             }
         });
         this.boxManager.mesh = box.mesh;
-        console.log(this.boxManager)
+
         this.renderer = new Renderer(this.gl);
         this.renderer.prepareScene(this.scene);
         this.resize();  
@@ -95,7 +99,7 @@ class App extends Application {
 
     render() {
         if (this.renderer) {
-            this.renderer.render(this.scene, this.camera);
+            this.renderer.render(this.scene, this.camera, this.light);
         }
     }
 
@@ -162,5 +166,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.querySelector('canvas');
     const app = new App(canvas);
     const gui = new GUI();
+    gui.add(app.light, 'ambient', 0.0, 1.0);
+    gui.add(app.light, 'diffuse', 0.0, 1.0);
+    gui.add(app.light, 'specular', 0.0, 1.0);
+    gui.add(app.light, 'shininess', 0.0, 1000.0);
+    gui.addColor(app.light, 'color');
+    for (let i = 0; i < 3; i++) {
+        gui.add(app.light.position, i, -10.0, 10.0).name('position.' + String.fromCharCode('x'.charCodeAt(0) + i));
+    }
     gui.add(app, 'enableMouseLook');
 });
