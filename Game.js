@@ -7,7 +7,7 @@ import { GLTFLoader } from './GLTFLoader.js';
 import { Camera } from './Camera.js';
 import { Renderer } from './Renderer.js';
 
-import { Plane } from './Plane.js';
+import { Drone } from './Drone.js';
 import { Box } from './Box.js';
 import { BoxManager } from './BoxManager.js';
 import { Light } from './Light.js';
@@ -50,11 +50,11 @@ class App extends Application {
         this.scene.addNode(this.camera);
         this.scene.addNode(this.light);
         
-        // find plane
-        this.plane = null;
+        // find drone
+        this.drone = null;
         this.scene.traverse(node => {
-            if (node instanceof Plane) {
-                this.plane = node;
+            if (node instanceof Drone) {
+                this.drone = node;
             }
         });
 
@@ -75,6 +75,7 @@ class App extends Application {
         this.scene.removeNode(box);
 
         console.log(this.scene);
+        console.log(quat);
     }
 
     update(){
@@ -82,16 +83,16 @@ class App extends Application {
         const dt = (this.time - this.startTime) * 0.001;
         this.startTime = this.time;
 
-        if(this.plane){                     
-            this.plane.update(dt, this.keys);     
-            this.camera.update(this.plane);
+        if(this.drone){                     
+            this.drone.update(dt, this.keys, this.camera);     
+            this.camera.update(this.drone);
         }
 
         if(this.boxManager){
             this.boxManager.update();
 
             if(this.boxManager.drop){
-                this.boxManager.addBox(this.scene, this.plane);
+                this.boxManager.addBox(this.scene, this.drone);
             }
             this.boxManager.drop = false;
         }
@@ -136,6 +137,21 @@ class App extends Application {
 
         let yawChange = dx * c.mouseSensitivity;
         c.yaw -= yawChange;
+
+        //console.log(c.yaw)
+        /*
+        const dx = e.movementX;
+        const c = this.drone;
+        console.log(dx);
+        console.log(c.rotation[1]);
+        c.rotation[1] -= dx * c.mouseSensitivity;
+
+        const pi = Math.PI;
+        const twopi = pi * 2;
+        const halfpi = pi / 2;
+        console.log(c.rotation[1]);
+
+        c.rotation[1] = ((c.rotation[1] % twopi) + twopi) % twopi;*/
     }
 
     keydownHandler(e) {
@@ -151,14 +167,16 @@ class App extends Application {
         let scale = c.distance;
 
         scale += e.deltaY * -0.01;
-        c.distance = Math.min(Math.max(5, scale), 20);
+        c.distance = Math.min(Math.max(5, scale), 200);
     }
 
     mouseClickHandler(e){
+        /*
         if(!this.boxManager.countDown){
             this.boxManager.drop = true;
             this.boxManager.countDown = true;
         }
+        */
     }
 }
 

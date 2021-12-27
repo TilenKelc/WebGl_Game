@@ -7,8 +7,8 @@ export class Node {
             ? vec3.clone(options.translation)
             : vec3.fromValues(0, 0, 0);
         this.rotation = options.rotation
-            ? quat.clone(options.rotation)
-            : quat.fromValues(0, 0, 0, 0);
+            ? vec3.clone(options.rotation)
+            : vec3.fromValues(0, 0, 0);
         this.scale = options.scale
             ? vec3.clone(options.scale)
             : vec3.fromValues(1, 1, 1);
@@ -39,11 +39,12 @@ export class Node {
     }
 
     updateMatrix() {
-        mat4.fromRotationTranslationScale(
-            this.matrix,
-            this.rotation,
-            this.translation,
-            this.scale);
+        const t = this.matrix;
+        const degrees = this.rotation.map(x => x * 180 / Math.PI);
+        const q = quat.fromEuler(quat.create(), ...degrees);
+        const v = vec3.clone(this.translation);
+        const s = vec3.clone(this.scale);
+        mat4.fromRotationTranslationScale(t, q, v, s);
     }
 
     addChild(node) {

@@ -1,6 +1,5 @@
 import { mat4, vec3, quat } from '../../lib/gl-matrix-module.js';
 import { Node } from './Node.js';
-import { Scene } from './Scene.js';
 
 export class Camera extends Node {
 
@@ -10,20 +9,13 @@ export class Camera extends Node {
         this.aspect = options.aspect || 1.5;
         this.fov = options.fov || 1.5;
         this.near = options.near || 1;
-        this.far = options.far || Infinity;
-        
+        this.far = options.far || Infinity; 
         this.mouseSensitivity = 0.002;
 
         this.distance = 10;
-        this.angle = 0;
 
         this.pitch = 0;
         this.yaw = 0;
-        this.roll;
-
-        this.DistanceToOrigin = 5;
-        this.phi = 3.14 / 2;
-        this.theta = 0;
 
         this.projection = mat4.create();
         this.view = mat4.create();
@@ -36,7 +28,7 @@ export class Camera extends Node {
             this.near, this.far);
     }
 
-    update(plane){
+    update(drone){
         const c = this;
 
         let camX = Math.sin(c.yaw) * c.distance;
@@ -52,7 +44,7 @@ export class Camera extends Node {
         mat4.fromTranslation(c.matrix, vec3.fromValues(camX, 0, camZ));
         
         const vec = vec3.create();
-        vec3.add(vec, vec3.clone(plane.translation), vec3.fromValues(camX, 0, camZ));
+        vec3.add(vec, vec3.clone(drone.translation), vec3.fromValues(camX, 0, camZ));
         var moveMatrix = mat4.create();
         mat4.fromTranslation(moveMatrix,  vec);
         mat4.multiply(c.matrix, c.matrix, moveMatrix);

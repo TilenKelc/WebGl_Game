@@ -31,14 +31,13 @@ export class BoxManager {
         }
     }
 
-    addBox(scene, plane){
+    addBox(scene, drone){
         const c = this;
 
         if(c.currentNumOfBoxes < c.maxNumOfBoxes){
             let box = new Box();
             box.mesh = c.mesh;
-            console.log(box);
-            box.matrix = mat4.clone(plane.matrix);
+            box.matrix = mat4.clone(drone.matrix);
             
             c.boxes.push(box);
             scene.addNode(box); 

@@ -1,3 +1,4 @@
+import { mat4, vec3, quat } from '../../lib/gl-matrix-module.js';
 import { BufferView } from './BufferView.js';
 import { Accessor } from './Accessor.js';
 import { Sampler } from './Sampler.js';
@@ -8,7 +9,7 @@ import { Mesh } from './Mesh.js';
 import { Camera } from './Camera.js';
 import { Node } from './Node.js';
 import { Scene } from './Scene.js';
-import { Plane } from './Plane.js';
+import { Drone } from './Drone.js';
 import { Box } from './Box.js';
 
 // This class loads all GLTF resources and instantiates
@@ -277,9 +278,13 @@ export class GLTFLoader {
         if (gltfSpec.mesh !== undefined) {
             options.mesh = await this.loadMesh(gltfSpec.mesh);
         }
+
+        if(options.rotation){
+            options.rotation = await this.ToEulerAngles(options.rotation);
+        }
         
         if(options.name == "fighter"){
-            const node = new Plane(options);
+            const node = new Drone(options);
             this.cache.set(gltfSpec, node);
             return node;
         }else if(options.name == "Cube"){
@@ -291,6 +296,29 @@ export class GLTFLoader {
             this.cache.set(gltfSpec, node);
             return node;
         }     
+    }
+
+    async ToEulerAngles(q) {
+        let angles = vec3.create();
+    
+        // roll (x-axis rotation)
+        let sinr_cosp = 2 * (q[3] * q[0] + q[1] * q[2]);
+        let cosr_cosp = 1 - 2 * (q[0] * q[0] + q[1] * q[1]);
+        angles[0] = Math.atan2(sinr_cosp, cosr_cosp);
+    
+        // pitch (y-axis rotation)
+        let sinp = 2 * (q[3] * q[1] - q[2] * q[0]);
+        if(Math.abs(sinp) >= 1){
+            angles[1] = Math.copysign(M_PI / 2, sinp); // use 90 degrees if out of range
+        }else{
+            angles[1] = Math.asin(sinp);
+        }
+    
+        // yaw (z-axis rotation)
+        let siny_cosp = 2 * (q[3] * q[2] + q[0] * q[1]);
+        let cosy_cosp = 1 - 2 * (q[1] * q[1] + q[2] * q[2]);
+        angles[2] = Math.atan2(siny_cosp, cosy_cosp);
+        return angles;
     }
 
     async loadScene(nameOrIndex) {
