@@ -30,18 +30,21 @@ export class Drone extends Node{
             -Math.sin(c.rotation[1]), 0, -Math.cos(c.rotation[1]));
         const right = vec3.set(vec3.create(),
              Math.cos(c.rotation[1]), 0, -Math.sin(c.rotation[1]));
-                
-        //const up = vec3.set(vec3.create(),
-        //     0, c.rotation[0], 0);
-
+        const up = vec3.set(vec3.create(),
+            0, c.rotation[0], 0);
         
         // 1: add movement acceleration
         let acc = vec3.create();
         
         // Up
-        //if(keys['Space']){
-        //    vec3.add(acc, acc, up);
-        //}
+        if(keys['Space']){
+            vec3.add(acc, acc, up);
+        }
+
+        // Down
+        if(keys['ShiftLeft']){
+            vec3.sub(acc, acc, up);
+        }
 
         //  Forward
         if(keys['KeyW']){

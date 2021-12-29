@@ -6,7 +6,7 @@ import { GUI } from '../../lib/dat.gui.module.js';
 import { GLTFLoader } from './GLTFLoader.js';
 import { Camera } from './Camera.js';
 import { Renderer } from './Renderer.js';
-
+import { Physics } from './Physics.js';
 import { Drone } from './Drone.js';
 import { Box } from './Box.js';
 import { BoxManager } from './BoxManager.js';
@@ -21,6 +21,7 @@ class App extends Application {
         this.keyupHandler = this.keyupHandler.bind(this);
         this.mouseZoomHandler = this.mouseZoomHandler.bind(this);
         this.mouseClickHandler = this.mouseClickHandler.bind(this);
+        this.mouseLock = false;
         this.keys = {};
 
         document.addEventListener('pointerlockchange', this.pointerlockchangeHandler);
@@ -66,16 +67,16 @@ class App extends Application {
                 box = node;
             }
         });
-        this.boxManager.mesh = box.mesh;
+        this.boxManager.mesh = box.mesh;        
 
         this.renderer = new Renderer(this.gl);
         this.renderer.prepareScene(this.scene);
         this.resize();  
 
         this.scene.removeNode(box);
+        this.physics = new Physics(this.scene);
 
         console.log(this.scene);
-        console.log(quat);
     }
 
     update(){
@@ -83,18 +84,24 @@ class App extends Application {
         const dt = (this.time - this.startTime) * 0.001;
         this.startTime = this.time;
 
-        if(this.drone){                     
-            this.drone.update(dt, this.keys, this.camera);     
-            this.camera.update(this.drone);
-        }
-
-        if(this.boxManager){
-            this.boxManager.update();
-
-            if(this.boxManager.drop){
-                this.boxManager.addBox(this.scene, this.drone);
+        if(this.mouseLock){
+            if(this.drone){                     
+                this.drone.update(dt, this.keys, this.camera);     
+                this.camera.update(this.drone);
             }
-            this.boxManager.drop = false;
+    
+            if(this.boxManager){
+                this.boxManager.update();
+    
+                if(this.boxManager.drop){
+                    this.boxManager.addBox(this.scene, this.drone);
+                }
+                this.boxManager.drop = false;
+            }
+    
+            if (this.physics) {
+                this.physics.update(dt);
+            }
         }
     }
 
@@ -121,8 +128,10 @@ class App extends Application {
 
     pointerlockchangeHandler() {
         if (document.pointerLockElement === this.canvas) {
+            this.mouseLock = true;
             this.canvas.addEventListener('mousemove', this.mousemoveHandler);
         } else {
+            this.mouseLock = false;
             this.canvas.removeEventListener('mousemove', this.mousemoveHandler);
         }
     }
@@ -132,26 +141,11 @@ class App extends Application {
         const dx = e.movementX;
         const dy = e.movementY;
 
-        let pitchChange = dy * c.mouseSensitivity;
-        c.pitch -= pitchChange;
+        let heightChange = dy * c.mouseSensitivity;
+        c.height -= heightChange;        
 
         let yawChange = dx * c.mouseSensitivity;
         c.yaw -= yawChange;
-
-        //console.log(c.yaw)
-        /*
-        const dx = e.movementX;
-        const c = this.drone;
-        console.log(dx);
-        console.log(c.rotation[1]);
-        c.rotation[1] -= dx * c.mouseSensitivity;
-
-        const pi = Math.PI;
-        const twopi = pi * 2;
-        const halfpi = pi / 2;
-        console.log(c.rotation[1]);
-
-        c.rotation[1] = ((c.rotation[1] % twopi) + twopi) % twopi;*/
     }
 
     keydownHandler(e) {
@@ -171,12 +165,10 @@ class App extends Application {
     }
 
     mouseClickHandler(e){
-        /*
-        if(!this.boxManager.countDown){
+        if(!this.boxManager.countDown && this.mouseLock){
             this.boxManager.drop = true;
             this.boxManager.countDown = true;
         }
-        */
     }
 }
 

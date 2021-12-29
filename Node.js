@@ -15,6 +15,22 @@ export class Node {
         this.matrix = options.matrix
             ? mat4.clone(options.matrix)
             : mat4.create();
+        this.aabb;
+        
+        if(options.mesh){
+            //console.log(options.mesh.primitives[0].attributes.POSITION.max);
+            this.aabb = {
+                min: options.mesh.primitives[0].attributes.POSITION.min,
+                max: options.mesh.primitives[0].attributes.POSITION.max,
+            };
+        }else{
+            this.aabb = {
+                min: [0, 0, 0],
+                max: [0, 0, 0],
+            };
+        }
+
+
 
         if (options.matrix) {
             this.updateTransform();
@@ -67,4 +83,24 @@ export class Node {
         });
     }
 
+    traverse(before, after) {
+        if (before) {
+            before(this);
+        }
+        for (let child of this.children) {
+            child.traverse(before, after);
+        }
+        if (after) {
+            after(this);
+        }
+    }
+
+    getGlobalTransform() {
+        if (!this.parent) {
+            return mat4.clone(this.matrix);
+        } else {
+            let matrix = this.parent.getGlobalTransform();
+            return mat4.mul(matrix, matrix, this.matrix);
+        }
+    }
 }

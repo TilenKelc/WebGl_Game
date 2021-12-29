@@ -1,4 +1,4 @@
-import { mat4, vec3, quat } from '../../lib/gl-matrix-module.js';
+import { mat4, vec3 } from '../../lib/gl-matrix-module.js';
 import { Node } from './Node.js';
 
 export class Camera extends Node {
@@ -13,9 +13,10 @@ export class Camera extends Node {
         this.mouseSensitivity = 0.002;
 
         this.distance = 10;
+        this.height = 0;
 
-        this.pitch = 0;
         this.yaw = 0;
+        this.outOfBounds = false;
 
         this.projection = mat4.create();
         this.view = mat4.create();
@@ -32,32 +33,45 @@ export class Camera extends Node {
         const c = this;
 
         let camX = Math.sin(c.yaw) * c.distance;
-        //let camY = this.distance;
+        let camY;
+
+        if(c.outOfBounds){
+            camY = 0;
+
+        }else{
+            camY = c.height;
+        }
+        
         let camZ = Math.cos(c.yaw) * c.distance;
 
-
-        var viewMatrix = mat4.create();
-
+        let viewMatrix = mat4.create();
         mat4.invert(viewMatrix, c.matrix);
 
         mat4.multiply(c.matrix, c.projection, viewMatrix);
-        mat4.fromTranslation(c.matrix, vec3.fromValues(camX, 0, camZ));
+        mat4.fromTranslation(c.matrix, vec3.fromValues(camX, camY, camZ));
         
-        const vec = vec3.create();
+        let vec = vec3.create();
         vec3.add(vec, vec3.clone(drone.translation), vec3.fromValues(camX, 0, camZ));
-        var moveMatrix = mat4.create();
+        let moveMatrix = mat4.create();
         mat4.fromTranslation(moveMatrix,  vec);
-        mat4.multiply(c.matrix, c.matrix, moveMatrix);
+        mat4.multiply(c.matrix, c.matrix, moveMatrix);        
 
-        /*
-        var tmp = mat4.create();
-        mat4.lookAt(tmp, vec3.fromValues(c.matrix[12], c.matrix[13], c.matrix[14]), vec3.fromValues(plane.matrix[12], plane.matrix[13], plane.matrix[14]), vec3.fromValues(0, 1, 0));
-        mat4.multiply(viewMatrix, viewMatrix, tmp);
-        */
-
-        var rotYMatrix = mat4.create();
+        let rotYMatrix = mat4.create();
         mat4.fromYRotation(rotYMatrix, c.yaw);
         mat4.multiply(c.matrix, c.matrix, rotYMatrix);
+
+        let pitch = -Math.tan(c.height / c.distance);
+
+        if(pitch > -0.5 && pitch < 0.5){
+            let rotXMatrix = mat4.create();
+            mat4.fromXRotation(rotXMatrix, pitch);
+            mat4.multiply(c.matrix, c.matrix, rotXMatrix);
+            c.outOfBounds = false; 
+        }else{
+            c.outOfBounds = true;
+        }
+        //console.log(c.outOfBounds);
+
 
         /*
         var rotXMatrix = mat4.create();

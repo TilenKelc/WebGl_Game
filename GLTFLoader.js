@@ -107,6 +107,7 @@ export class GLTFLoader {
 
     async loadAccessor(nameOrIndex) {
         const gltfSpec = this.findByNameOrIndex(this.gltf.accessors, nameOrIndex);
+
         if (this.cache.has(gltfSpec)) {
             return this.cache.get(gltfSpec);
         }
@@ -309,7 +310,7 @@ export class GLTFLoader {
         // pitch (y-axis rotation)
         let sinp = 2 * (q[3] * q[1] - q[2] * q[0]);
         if(Math.abs(sinp) >= 1){
-            angles[1] = Math.copysign(M_PI / 2, sinp); // use 90 degrees if out of range
+            angles[1] = Math.sign(Math.PI / 2, sinp); // use 90 degrees if out of range
         }else{
             angles[1] = Math.asin(sinp);
         }
