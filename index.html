@@ -11,10 +11,14 @@
 </head>
 <body>
     <div class="overlay">
-        <a class="back" href="../../index.html">Back</a>
+        <a class="back" href="../../index.html" id="back" style="display: hidden">Back</a>
+    </div> 
+    <div id="startScreen" class="startscreen" >
+        <img src="../../common/images/test_title.png" id="testimage"><br>
+        <button onclick="startGame()" id="startButton">Start</button>
     </div>
     <div class="fullscreen">
-        <canvas></canvas>
+        <canvas id="canvas"></canvas>
     </div>
 </body>
 </html>

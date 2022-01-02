@@ -11,7 +11,6 @@ import { Drone } from './Drone.js';
 import { Box } from './Box.js';
 import { BoxManager } from './BoxManager.js';
 import { Light } from './Light.js';
-
 class App extends Application {
 
     initHandlers() {
@@ -32,7 +31,6 @@ class App extends Application {
 
         this.light = new Light();
     }
-
     async start() {
         const gl = this.gl;
 
@@ -172,8 +170,9 @@ class App extends Application {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function showGame() {
     const canvas = document.querySelector('canvas');
+    canvas.style.background='none';
     const app = new App(canvas);
     const gui = new GUI();
     gui.add(app.light, 'ambient', 0.0, 1.0);
@@ -185,4 +184,16 @@ document.addEventListener('DOMContentLoaded', () => {
         gui.add(app.light.position, i, -10.0, 10.0).name('position.' + String.fromCharCode('x'.charCodeAt(0) + i));
     }
     gui.add(app, 'enableMouseLook');
-});
+};
+
+
+//start screen
+let startButtonPressed = document.getElementById('startButton');
+let backButton = document.getElementById('back');
+let titleImage = document.getElementById('testimage');
+startButtonPressed.onclick = function(){
+    showGame();
+    startButtonPressed.style.display = 'none';
+    backButton.style.display = 'block';
+    titleImage.style.display ='none';
+}
