@@ -37,7 +37,7 @@ class App extends Application {
         this.initHandlers();
 
         this.loader = new GLTFLoader();
-        await this.loader.load('../../common/models/gltf/teren.gltf');
+        await this.loader.load('../../common/models/scene/scene.gltf');
 
         this.scene = await this.loader.loadScene(this.loader.defaultScene);
 

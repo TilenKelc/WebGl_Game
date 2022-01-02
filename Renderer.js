@@ -233,11 +233,7 @@ export class Renderer {
         const vao = this.glObjects.get(primitive);
         const material = primitive.material;
         const texture = material.baseColorTexture;
-        const glTexture = null;
-        console.log(primitive)
-        if(texture.image){
-            glTexture = this.glObjects.get(texture.image);
-        }
+        const glTexture = this.glObjects.get(texture.image);
         const glSampler = this.glObjects.get(texture.sampler);
 
         gl.bindVertexArray(vao);
