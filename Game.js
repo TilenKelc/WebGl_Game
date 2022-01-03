@@ -28,9 +28,8 @@ class App extends Application {
         document.addEventListener('keyup', this.keyupHandler);
         document.addEventListener('wheel', this.mouseZoomHandler);
         document.addEventListener('click', this.mouseClickHandler);
-
-        this.light = new Light();
     }
+
     async start() {
         const gl = this.gl;
 
@@ -44,10 +43,17 @@ class App extends Application {
         this.time = Date.now();
         this.startTime = this.time;
         
-
         this.camera = new Camera();
         this.scene.addNode(this.camera);
-        this.scene.addNode(this.light);
+
+        let lightLocations = [[10, 10], [-5, 5], [5, 5], [5, -5]];
+        this.lights = []
+        for (let i = 0; i < 4; i++) {
+            let light = new Light();
+            mat4.fromTranslation(light.matrix, [0, 2, 0]);;
+            this.lights.push(light);
+            this.scene.addNode(light);
+        }
         
         // find drone and box
         this.drone = null;
@@ -95,12 +101,23 @@ class App extends Application {
             if (this.physics) {
                 this.physics.update(dt);
             }
+
+            if(this.scene){
+                let lightCounter = 0;
+                this.scene.traverse(node => {
+                    if (node instanceof Light && lightCounter < 3) {
+                        node.diffuseColor[lightCounter] = Math.sin(this.time / 1000 + lightCounter * Math.PI/2) * 255;
+                        node.specularColor[lightCounter] = Math.sin(this.time / 1000 + lightCounter * Math.PI/3) * 255;
+                        lightCounter++;
+                    }
+                });
+            }
         }
     }
 
     render() {
         if (this.renderer) {
-            this.renderer.render(this.scene, this.camera, this.light);
+            this.renderer.render(this.scene, this.camera, this.lights);
         }
     }
 
@@ -169,15 +186,15 @@ function showGame() {
     const canvas = document.querySelector('canvas');
     canvas.style.background='none';
     const app = new App(canvas);
-    const gui = new GUI();
-    gui.add(app.light, 'ambient', 0.0, 1.0);
-    gui.add(app.light, 'diffuse', 0.0, 1.0);
-    gui.add(app.light, 'specular', 0.0, 1.0);
-    gui.add(app.light, 'shininess', 0.0, 1000.0);
-    gui.addColor(app.light, 'color');
-    for (let i = 0; i < 3; i++) {
-        gui.add(app.light.position, i, -10.0, 10.0).name('position.' + String.fromCharCode('x'.charCodeAt(0) + i));
-    }
+    //const gui = new GUI();
+    //gui.add(app.light, 'ambient', 0.0, 1.0);
+    //gui.add(app.light, 'diffuse', 0.0, 1.0);
+    //gui.add(app.light, 'specular', 0.0, 1.0);
+    //gui.add(app.light, 'shininess', 0.0, 1000.0);
+    //gui.addColor(app.light, 'color');
+    //for (let i = 0; i < 3; i++) {
+    //    gui.add(app.light.position, i, -10.0, 10.0).name('position.' + String.fromCharCode('x'.charCodeAt(0) + i));
+    //}
     app.enableMouseLook();
 };
 
