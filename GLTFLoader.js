@@ -284,11 +284,11 @@ export class GLTFLoader {
             options.rotation = await this.ToEulerAngles(options.rotation);
         }
         
-        if(options.name == "fighter"){
+        if(options.name == "drone"){
             const node = new Drone(options);
             this.cache.set(gltfSpec, node);
             return node;
-        }else if(options.name == "Cube"){
+        }else if(options.name == "box"){
             const node = new Box(options);
             this.cache.set(gltfSpec, node);
             return node;

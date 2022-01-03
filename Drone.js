@@ -14,7 +14,7 @@ export class Drone extends Node{
         
         this.maxTilt = this.degreesToRadians(20);
 
-        this.startPitch = this.degreesToRadians(90);
+        this.startPitch = this.degreesToRadians(110);
         this.pitch = this.startPitch;
 
         this.startRoll = this.degreesToRadians(0);
@@ -23,7 +23,7 @@ export class Drone extends Node{
         this.battery = 100;
     }
 
-    update(dt, keys, camera){
+    update(dt, keys){
         const c = this;
 
         const forward = vec3.set(vec3.create(),

@@ -49,22 +49,17 @@ class App extends Application {
         this.scene.addNode(this.camera);
         this.scene.addNode(this.light);
         
-        // find drone
+        // find drone and box
         this.drone = null;
+        let box = null;
         this.scene.traverse(node => {
             if (node instanceof Drone) {
                 this.drone = node;
-            }
-        });
-
-        // find box
-        this.boxManager = new BoxManager();
-        let box = null;
-        this.scene.traverse(node => {
-            if (node instanceof Box) {
+            }else if(node instanceof Box){
                 box = node;
             }
         });
+        this.boxManager = new BoxManager();
         this.boxManager.mesh = box.mesh;        
 
         this.renderer = new Renderer(this.gl);
@@ -183,7 +178,7 @@ function showGame() {
     for (let i = 0; i < 3; i++) {
         gui.add(app.light.position, i, -10.0, 10.0).name('position.' + String.fromCharCode('x'.charCodeAt(0) + i));
     }
-    gui.add(app, 'enableMouseLook');
+    app.enableMouseLook();
 };
 
 
