@@ -189,11 +189,21 @@ function showGame() {
 
 //start screen
 let startButtonPressed = document.getElementById('startButton');
-let backButton = document.getElementById('back');
+let quitButton = document.getElementById('back');
 let titleImage = document.getElementById('testimage');
+let scoreCounter = document.getElementById('scoreCounter');
+let score = document.getElementById('score');
 startButtonPressed.onclick = function(){
     showGame();
     startButtonPressed.style.display = 'none';
-    backButton.style.display = 'block';
+    quitButton.style.display = 'block';
     titleImage.style.display ='none';
+    scoreCounter.style.display='block';
+}
+
+let s = 0;
+let addPoints = document.getElementById('addPoints');
+addPoints.onclick = function(){
+    s += 100;
+    score.innerHTML = s;
 }
