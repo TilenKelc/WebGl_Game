@@ -1,4 +1,9 @@
 import { vec3, mat4 } from '../../lib/gl-matrix-module.js';
+import { Box } from './Box.js';
+import { Camera } from './Camera.js';
+import { Drone } from './Drone.js';
+import { Light } from './Light.js';
+import { SkyBox } from './SkyBox.js';
 
 export class Physics {
 
@@ -8,19 +13,22 @@ export class Physics {
 
     update(dt) {
         this.scene.traverse(node => {
-            if (node.velocity) {
+            if((node instanceof Drone)){
                 vec3.scaleAndAdd(node.translation, node.translation, node.velocity, dt);
                 node.updateMatrix();
                 this.scene.traverse(other => {
-                    if (node !== other) {
-                        this.resolveCollision(node, other);
+                    if(!(other instanceof SkyBox) && !(other instanceof Light) && !(other instanceof Camera)){
+                        if(other.aabb.min != null && other.aabb.max != null){
+                            if(node !== other) {
+                                this.resolveCollision(node, other);
+                            }
+                        }
+
                     }
                 });
             }
         });
     }
-
-    // pred translacijo, se scalira bounding box
 
     intervalIntersection(min1, max1, min2, max2) {
         return !(min1 > max2 || min2 > max1);
@@ -36,14 +44,22 @@ export class Physics {
         // Update bounding boxes with global translation.
         const ta = a.getGlobalTransform();
         const tb = b.getGlobalTransform();
+        
+        const scalea = mat4.getScaling(mat4.create(), ta);
+        const scaleb = mat4.getScaling(mat4.create(), tb);
+
+        let mina = vec3.multiply(vec3.create(), scalea, a.aabb.min);
+        let maxa = vec3.multiply(vec3.create(), scalea, a.aabb.max);
+        let minb = vec3.multiply(vec3.create(), scaleb, b.aabb.min);
+        let maxb = vec3.multiply(vec3.create(), scaleb, b.aabb.max);
 
         const posa = mat4.getTranslation(vec3.create(), ta);
         const posb = mat4.getTranslation(vec3.create(), tb);
 
-        const mina = vec3.add(vec3.create(), posa, a.aabb.min);
-        const maxa = vec3.add(vec3.create(), posa, a.aabb.max);
-        const minb = vec3.add(vec3.create(), posb, b.aabb.min);
-        const maxb = vec3.add(vec3.create(), posb, b.aabb.max);
+        vec3.add(mina, posa, mina);
+        vec3.add(maxa, posa, maxa);
+        vec3.add(minb, posb, minb);
+        vec3.add(maxb, posb, maxb);
 
         // Check if there is collision.
         const isColliding = this.aabbIntersection({

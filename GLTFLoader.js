@@ -11,6 +11,7 @@ import { Node } from './Node.js';
 import { Scene } from './Scene.js';
 import { Drone } from './Drone.js';
 import { Box } from './Box.js';
+import { SkyBox } from './SkyBox.js';
 
 // This class loads all GLTF resources and instantiates
 // the corresponding classes. Keep in mind that it loads
@@ -285,13 +286,15 @@ export class GLTFLoader {
         }
         
         if(options.name == "drone"){
-            //console.log(options)
-
             const node = new Drone(options);
             this.cache.set(gltfSpec, node);
             return node;
         }else if(options.name == "box"){
             const node = new Box(options);
+            this.cache.set(gltfSpec, node);
+            return node;
+        }else if(options.name == "Sphere.001"){
+            const node = new SkyBox(options);
             this.cache.set(gltfSpec, node);
             return node;
         }else{

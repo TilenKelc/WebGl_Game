@@ -87,8 +87,10 @@ class App extends Application {
         this.startTime = this.time;
 
         if(this.mouseLock){
-            if(this.drone){                     
+            if(this.drone){   
+                //let distance = vec3.distance(this.drone.translation, vec3.fromValues(0, 0, 0));                  
                 this.drone.update(dt, this.keys, this.camera);     
+
                 this.camera.update(this.drone);
             }
     

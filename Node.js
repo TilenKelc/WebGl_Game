@@ -15,31 +15,15 @@ export class Node {
         this.matrix = options.matrix
             ? mat4.clone(options.matrix)
             : mat4.create();
-        this.aabb;
-
-
-        if(options.mesh){
-            let tmpMin = options.mesh.primitives[0].attributes.POSITION.min;
-            let tmpMax = options.mesh.primitives[0].attributes.POSITION.max;
-
-            let a = vec3.create();
-            vec3.scale(a, vec3.clone(tmpMin), vec3.clone(options.scale));
-            //console.log(a);
-
-
-            //console.log(options.mesh.primitives[0].attributes.POSITION.max);
-            this.aabb = {
+        this.aabb = options.mesh
+            ? {
                 min: options.mesh.primitives[0].attributes.POSITION.min,
                 max: options.mesh.primitives[0].attributes.POSITION.max,
+              }
+            : {
+                min: null,
+                max: null,
             };
-        }else{
-            this.aabb = {
-                min: [0, 0, 0],
-                max: [0, 0, 0],
-            };
-        }
-
-
 
         if (options.matrix) {
             this.updateTransform();

@@ -32,7 +32,7 @@ export class Drone extends Node{
              Math.cos(c.rotation[1]), 0, -Math.sin(c.rotation[1]));
         const up = vec3.set(vec3.create(),
             0, c.rotation[0], 0);
-        
+                
         // 1: add movement acceleration
         let acc = vec3.create();
         
