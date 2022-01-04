@@ -208,6 +208,7 @@ startButtonPressed.onclick = function(){
     quitButton.style.display = 'block';
     titleImage.style.display ='none';
     scoreCounter.style.display='block';
+    document.getElementById('startScreen').style.display = 'none';
 }
 
 let s = 0;
