@@ -202,6 +202,7 @@ startButtonPressed.onclick = function(){
     quitButton.style.display = 'block';
     titleImage.style.display ='none';
     scoreCounter.style.display='block';
+    document.getElementById('startScreen').style.display = 'none';
 }
 
 let s = 0;
@@ -223,4 +224,19 @@ muteButton.onclick = function(){
         music.muted = false;
         muteButton.style.background = "url('https://img.icons8.com/ios/50/000000/mute--v2.png')";
     }
+}
+
+//mute using mute key on keyboard
+document.onkeydown = function(event){
+    if(event.key == "m" || event.key == "M"){
+        if(!music.muted){
+            music.muted = true;
+            muteButton.style.background = "url('https://img.icons8.com/ios/50/000000/mute--v1.png')";
+        }
+        else{
+            music.muted = false;
+            muteButton.style.background = "url('https://img.icons8.com/ios/50/000000/mute--v2.png')";
+        }
+    }
+    return false;
 }
