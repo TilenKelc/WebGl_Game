@@ -50,7 +50,7 @@ class App extends Application {
         this.lights = []
         for (let i = 0; i < 4; i++) {
             let light = new Light();
-            mat4.fromTranslation(light.matrix, [0, 2, 0]);;
+            mat4.fromTranslation(light.matrix, [lightLocations[i][0], 2, lightLocations[i][2]]);;
             this.lights.push(light);
             this.scene.addNode(light);
         }
