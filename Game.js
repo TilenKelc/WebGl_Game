@@ -28,6 +28,10 @@ class App extends Application {
         document.addEventListener('keyup', this.keyupHandler);
         document.addEventListener('wheel', this.mouseZoomHandler);
         document.addEventListener('click', this.mouseClickHandler);
+
+        this.boxManager = new BoxManager();
+        //let lightLocations = [[200, 200], [-200, 200], [-200, -200], [200, -200]];
+        
     }
 
     async start() {
@@ -46,26 +50,24 @@ class App extends Application {
         this.camera = new Camera();
         this.scene.addNode(this.camera);
 
-        let lightLocations = [[10, 10], [-5, 5], [5, 5], [5, -5]];
+        let lightLocations = [[-5, -5], [-5, 5], [5, 5], [5, -5]];
         this.lights = []
         for (let i = 0; i < 4; i++) {
             let light = new Light();
-            mat4.fromTranslation(light.matrix, [lightLocations[i][0], 2, lightLocations[i][2]]);;
+            mat4.fromTranslation(light.matrix, [lightLocations[i][0], 5, lightLocations[i][1]]);;
             this.lights.push(light);
-            this.scene.addNode(light);
         }
         
         // find drone and box
         this.drone = null;
         let box = null;
-        this.scene.traverse(node => {
+        await this.scene.traverse(node => {
             if (node instanceof Drone) {
                 this.drone = node;
             }else if(node instanceof Box){
                 box = node;
             }
         });
-        this.boxManager = new BoxManager();
         this.boxManager.mesh = box.mesh;        
 
         this.renderer = new Renderer(this.gl);
@@ -101,7 +103,7 @@ class App extends Application {
             if (this.physics) {
                 this.physics.update(dt);
             }
-
+            
             if(this.scene){
                 let lightCounter = 0;
                 this.scene.traverse(node => {
@@ -152,6 +154,7 @@ class App extends Application {
         const dy = e.movementY;
 
         let heightChange = dy * c.mouseSensitivity;
+        //console.log(c.height -= heightChange)
         c.height -= heightChange;        
 
         let yawChange = dx * c.mouseSensitivity;
@@ -186,16 +189,10 @@ function showGame() {
     const canvas = document.querySelector('canvas');
     canvas.style.background='none';
     const app = new App(canvas);
-    //const gui = new GUI();
-    //gui.add(app.light, 'ambient', 0.0, 1.0);
-    //gui.add(app.light, 'diffuse', 0.0, 1.0);
-    //gui.add(app.light, 'specular', 0.0, 1.0);
-    //gui.add(app.light, 'shininess', 0.0, 1000.0);
-    //gui.addColor(app.light, 'color');
-    //for (let i = 0; i < 3; i++) {
-    //    gui.add(app.light.position, i, -10.0, 10.0).name('position.' + String.fromCharCode('x'.charCodeAt(0) + i));
-    //}
-    app.enableMouseLook();
+    const gui = new GUI();
+    gui.add(app, 'enableMouseLook');
+
+    //app.enableMouseLook();
 };
 
 

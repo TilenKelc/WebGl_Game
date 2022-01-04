@@ -281,6 +281,28 @@ export class Renderer {
         colorArray[3] = [...color];
         location = gl.getUniformLocation(program.program, "uLightAttenuation");
         gl.uniform3fv(location, [...colorArray[0], ...colorArray[1], ...colorArray[2], ...colorArray[3]]);
+        console.log(this.programs.simple.uniforms)
+        /*
+        for(let i = 0; i < lights.length; i++){
+            let color = vec3.clone(lights[i].ambientColor);
+            vec3.scale(color, color, 1.0 / 255.0);
+            gl.uniform3fv(program.uniforms['uAmbientColor[' + i + ']'], color);
+            
+            color = vec3.clone(lights[i].diffuseColor);
+            vec3.scale(color, color, 1.0 / 255.0);
+            gl.uniform3fv(program.uniforms['uDiffuseColor[' + i + ']'], color);
+            
+            color = vec3.clone(lights[i].specularColor);
+            vec3.scale(color, color, 1.0 / 255.0);
+            gl.uniform3fv(program.uniforms['uSpecularColor[' + i + ']'], color);
+            
+            let position = [0,0,0];
+            mat4.getTranslation(position, lights[i].matrix);
+
+            gl.uniform3fv(program.uniforms['uLightPosition[' + i + ']'], position);
+            gl.uniform1f(program.uniforms['uShininess[' + i + ']'], lights[i].shininess);
+            gl.uniform3fv(program.uniforms['uLightAttenuation[' + i + ']'], lights[i].attenuatuion);
+        }*/
 
         for (const node of scene.nodes) {
             this.renderNode(node, matrix);
