@@ -8,7 +8,7 @@ export class Drone extends Node{
 
         this.velocity = vec3.set(vec3.create(), 0, 0, 0);
         this.rotateSensitivity = 1;
-        this.maxSpeed = 3;
+        this.maxSpeed = 10;
         this.friction = 0.2;
         this.acceleration = 20;
         

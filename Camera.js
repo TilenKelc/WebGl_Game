@@ -14,6 +14,7 @@ export class Camera extends Node {
 
         this.distance = 10;
         this.height = 0;
+        this.lastHeight = this.height;
 
         this.yaw = 0;
         this.outOfBounds = false;
@@ -33,15 +34,7 @@ export class Camera extends Node {
         const c = this;
 
         let camX = Math.sin(c.yaw) * c.distance;
-        let camY;
-
-        if(c.outOfBounds){
-            camY = 0;
-
-        }else{
-            camY = c.height;
-        }
-        
+        let camY = c.height;
         let camZ = Math.cos(c.yaw) * c.distance;
 
         let viewMatrix = mat4.create();
