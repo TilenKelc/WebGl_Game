@@ -230,3 +230,18 @@ muteButton.onclick = function(){
         muteButton.style.background = "url('https://img.icons8.com/ios/50/000000/mute--v2.png')";
     }
 }
+
+//mute using mute key on keyboard
+document.onkeydown = function(event){
+    if(event.key == "m" || event.key == "M"){
+        if(!music.muted){
+            music.muted = true;
+            muteButton.style.background = "url('https://img.icons8.com/ios/50/000000/mute--v1.png')";
+        }
+        else{
+            music.muted = false;
+            muteButton.style.background = "url('https://img.icons8.com/ios/50/000000/mute--v2.png')";
+        }
+    }
+    return false;
+}
