@@ -20,6 +20,8 @@ export class Physics {
         });
     }
 
+    // pred translacijo, se scalira bounding box
+
     intervalIntersection(min1, max1, min2, max2) {
         return !(min1 > max2 || min2 > max1);
     }

@@ -163,19 +163,7 @@ export class Renderer {
         }
     }
 
-    getViewMatrix(camera) {
-        const mvMatrix = mat4.clone(camera.matrix);
-        let parent = camera.parent;
-        while (parent) {
-            mat4.mul(mvMatrix, parent.matrix, mvMatrix);
-            parent = parent.parent;
-        }
-        mat4.invert(mvMatrix, mvMatrix);
-        //mat4.mul(mvpMatrix, camera.camera.matrix, mvpMatrix);
-        return mvMatrix;
-    }
-
-    render(scene, camera, lights) {
+    render(scene, camera) {
         const gl = this.gl;
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -189,123 +177,36 @@ export class Renderer {
 
         let matrix = mat4.create();
 
-        const viewMatrix = this.getViewMatrix(camera);
+        const viewMatrix = camera.getGlobalTransform();
+        mat4.invert(viewMatrix, viewMatrix);
         mat4.copy(matrix, viewMatrix);
         gl.uniformMatrix4fv(program.uniforms.uProjection, false, camera.projection);
 
-        let colorArray = [];
-        let color = vec3.clone(lights[0].ambientColor);
-        vec3.scale(color, color, 1.0 / 255.0);
-        colorArray[0] = [...color];
-        color = vec3.clone(lights[1].ambientColor);
-        vec3.scale(color, color, 1.0 / 255.0);
-        colorArray[1] = [...color];
-        color = vec3.clone(lights[2].ambientColor);
-        vec3.scale(color, color, 1.0 / 255.0);
-        colorArray[2] = [...color],
-        color = vec3.clone(lights[3].ambientColor);
-        vec3.scale(color, color, 1.0 / 255.0);
-        colorArray[3] = [...color];
-        let location = gl.getUniformLocation(program.program, "uAmbientColor");
-        gl.uniform3fv(location, [...colorArray[0], ...colorArray[1], ...colorArray[2], ...colorArray[3]]);
-       
-        
-        colorArray = [];
-        color = vec3.clone(lights[0].diffuseColor);
-        vec3.scale(color, color, 1.0 / 255.0);
-        colorArray[0] = [...color];
-        color = vec3.clone(lights[1].diffuseColor);
-        vec3.scale(color, color, 1.0 / 255.0);
-        colorArray[1] = [...color];
-        color = vec3.clone(lights[2].diffuseColor);
-        vec3.scale(color, color, 1.0 / 255.0);
-        colorArray[2] = [...color];
-        color = vec3.clone(lights[3].diffuseColor);
-        vec3.scale(color, color, 1.0 / 255.0);
-        colorArray[3] = [...color];
-        location = gl.getUniformLocation(program.program, "uDiffuseColor");
-        gl.uniform3fv(location, [...colorArray[0], ...colorArray[1], ...colorArray[2], ...colorArray[3]]);
-       
-
-        colorArray = [];
-        color = vec3.clone(lights[0].specularColor);
-        vec3.scale(color, color, 1.0 / 255.0);
-        colorArray[0] = [...color];
-        color = vec3.clone(lights[1].specularColor);
-        vec3.scale(color, color, 1.0 / 255.0);
-        colorArray[1] = [...color];
-        color = vec3.clone(lights[2].specularColor);
-        vec3.scale(color, color, 1.0 / 255.0);
-        colorArray[2] = [...color];
-        color = vec3.clone(lights[3].specularColor);
-        vec3.scale(color, color, 1.0 / 255.0);
-        colorArray[3] = [...color];
-        location = gl.getUniformLocation(program.program, "uSpecularColor");
-        gl.uniform3fv(location, [...colorArray[0], ...colorArray[1], ...colorArray[2], ...colorArray[3]]);
-
-        
-        colorArray = [];
-        let position = [0, 0, 0];
-        mat4.getTranslation(position, lights[0].matrix);
-        colorArray[0] = [...position];
-        position = [0, 0, 0];
-        mat4.getTranslation(position, lights[1].matrix);
-        colorArray[1] = [...position];
-        position = [0, 0, 0];
-        mat4.getTranslation(position, lights[2].matrix);
-        colorArray[2] = [...position];
-        position = [0, 0, 0];
-        mat4.getTranslation(position, lights[3].matrix);
-        colorArray[3] = [...position];
-        location = gl.getUniformLocation(program.program, "uLightPosition");
-        gl.uniform3fv(location, [...colorArray[0], ...colorArray[1], ...colorArray[2], ...colorArray[3]]);
-       
-
-        colorArray = [];
-        colorArray[0] = lights[0].shininess;
-        colorArray[1] = lights[1].shininess;
-        colorArray[2] = lights[2].shininess;
-        colorArray[3] = lights[3].shininess;
-        location = gl.getUniformLocation(program.program, "uShininess");
-        gl.uniform1fv(location, colorArray);
-       
-
-        colorArray = [];
-        color = vec3.clone(lights[0].attenuatuion);
-        colorArray[0] = [...color];
-        color = vec3.clone(lights[1].attenuatuion);
-        colorArray[1] = [...color];
-        color = vec3.clone(lights[2].attenuatuion);
-        colorArray[2] = [...color];
-        color = vec3.clone(lights[3].attenuatuion);
-        colorArray[3] = [...color];
-        location = gl.getUniformLocation(program.program, "uLightAttenuation");
-        gl.uniform3fv(location, [...colorArray[0], ...colorArray[1], ...colorArray[2], ...colorArray[3]]);
-        console.log(this.programs.simple.uniforms)
-        /*
-        for(let i = 0; i < lights.length; i++){
-            let color = vec3.clone(lights[i].ambientColor);
-            vec3.scale(color, color, 1.0 / 255.0);
-            gl.uniform3fv(program.uniforms['uAmbientColor[' + i + ']'], color);
-            
-            color = vec3.clone(lights[i].diffuseColor);
-            vec3.scale(color, color, 1.0 / 255.0);
-            gl.uniform3fv(program.uniforms['uDiffuseColor[' + i + ']'], color);
-            
-            color = vec3.clone(lights[i].specularColor);
-            vec3.scale(color, color, 1.0 / 255.0);
-            gl.uniform3fv(program.uniforms['uSpecularColor[' + i + ']'], color);
-            
-            let position = [0,0,0];
-            mat4.getTranslation(position, lights[i].matrix);
-
-            gl.uniform3fv(program.uniforms['uLightPosition[' + i + ']'], position);
-            gl.uniform1f(program.uniforms['uShininess[' + i + ']'], lights[i].shininess);
-            gl.uniform3fv(program.uniforms['uLightAttenuation[' + i + ']'], lights[i].attenuatuion);
-        }*/
-
+        let lightCounter = 0;
         for (const node of scene.nodes) {
-            this.renderNode(node, matrix);
+            if(node instanceof Light){
+                let color = vec3.clone(node.ambientColor);
+                vec3.scale(color, color, 1.0 / 255.0);
+                gl.uniform3fv(program.uniforms['uAmbientColor[' + lightCounter + ']'], color);
+                
+                color = vec3.clone(node.diffuseColor);
+                vec3.scale(color, color, 1.0 / 255.0);
+                gl.uniform3fv(program.uniforms['uDiffuseColor[' + lightCounter + ']'], color);
+                
+                color = vec3.clone(node.specularColor);
+                vec3.scale(color, color, 1.0 / 255.0);
+                gl.uniform3fv(program.uniforms['uSpecularColor[' + lightCounter + ']'], color);
+                
+                let position = [0,0,0];
+                mat4.getTranslation(position, node.matrix);
+
+                gl.uniform3fv(program.uniforms['uLightPosition[' + lightCounter + ']'], position);
+                gl.uniform1f(program.uniforms['uShininess[' + lightCounter + ']'], node.shininess);
+                gl.uniform3fv(program.uniforms['uLightAttenuation[' + lightCounter + ']'], node.attenuatuion);
+                lightCounter++;
+            }else{
+                this.renderNode(node, matrix);
+            }
         }
     }
 

@@ -285,6 +285,8 @@ export class GLTFLoader {
         }
         
         if(options.name == "drone"){
+            //console.log(options)
+
             const node = new Drone(options);
             this.cache.set(gltfSpec, node);
             return node;

@@ -16,8 +16,17 @@ export class Node {
             ? mat4.clone(options.matrix)
             : mat4.create();
         this.aabb;
-        
+
+
         if(options.mesh){
+            let tmpMin = options.mesh.primitives[0].attributes.POSITION.min;
+            let tmpMax = options.mesh.primitives[0].attributes.POSITION.max;
+
+            let a = vec3.create();
+            vec3.scale(a, vec3.clone(tmpMin), vec3.clone(options.scale));
+            //console.log(a);
+
+
             //console.log(options.mesh.primitives[0].attributes.POSITION.max);
             this.aabb = {
                 min: options.mesh.primitives[0].attributes.POSITION.min,

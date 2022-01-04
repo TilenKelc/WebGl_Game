@@ -30,8 +30,13 @@ class App extends Application {
         document.addEventListener('click', this.mouseClickHandler);
 
         this.boxManager = new BoxManager();
-        //let lightLocations = [[200, 200], [-200, 200], [-200, -200], [200, -200]];
-        
+        let lightLocations = [[-5, -5], [-5, 2], [-5, 5], [5, -5]];
+        this.lights = []
+        for (let i = 0; i < 4; i++) {
+            let light = new Light();
+            mat4.fromTranslation(light.matrix, [lightLocations[i][0], 5, lightLocations[i][1]]);
+            this.lights.push(light);
+        }
     }
 
     async start() {
@@ -50,18 +55,14 @@ class App extends Application {
         this.camera = new Camera();
         this.scene.addNode(this.camera);
 
-        let lightLocations = [[-5, -5], [-5, 5], [5, 5], [5, -5]];
-        this.lights = []
-        for (let i = 0; i < 4; i++) {
-            let light = new Light();
-            mat4.fromTranslation(light.matrix, [lightLocations[i][0], 5, lightLocations[i][1]]);;
-            this.lights.push(light);
+        for(let i = 0; i < 4; i++){
+            this.scene.addNode(this.lights[i]);
         }
         
         // find drone and box
         this.drone = null;
         let box = null;
-        await this.scene.traverse(node => {
+        this.scene.traverse(node => {
             if (node instanceof Drone) {
                 this.drone = node;
             }else if(node instanceof Box){
@@ -103,23 +104,12 @@ class App extends Application {
             if (this.physics) {
                 this.physics.update(dt);
             }
-            
-            if(this.scene){
-                let lightCounter = 0;
-                this.scene.traverse(node => {
-                    if (node instanceof Light && lightCounter < 3) {
-                        node.diffuseColor[lightCounter] = Math.sin(this.time / 1000 + lightCounter * Math.PI/2) * 255;
-                        node.specularColor[lightCounter] = Math.sin(this.time / 1000 + lightCounter * Math.PI/3) * 255;
-                        lightCounter++;
-                    }
-                });
-            }
         }
     }
 
     render() {
         if (this.renderer) {
-            this.renderer.render(this.scene, this.camera, this.lights);
+            this.renderer.render(this.scene, this.camera);
         }
     }
 
@@ -190,9 +180,13 @@ function showGame() {
     canvas.style.background='none';
     const app = new App(canvas);
     const gui = new GUI();
+    for(let i = 0; i < 4; i++){
+        gui.addColor(app.lights[i], 'ambientColor');
+        gui.addColor(app.lights[i], 'diffuseColor');
+        gui.addColor(app.lights[i], 'specularColor');
+        gui.add(app.lights[i], 'shininess', 0.0, 1000.0);
+    }
     gui.add(app, 'enableMouseLook');
-
-    //app.enableMouseLook();
 };
 
 
