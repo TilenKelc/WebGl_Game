@@ -142,7 +142,7 @@ export class Drone extends Node{
         // 5: update translation
         vec3.scaleAndAdd(c.translation, c.translation, c.velocity, dt);
     
-        // 6: update the final transform
+        // 6: update the final matrix
         c.updateMatrix();
     }
 
