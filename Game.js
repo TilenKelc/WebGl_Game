@@ -212,6 +212,8 @@ startButtonPressed.onclick = function(){
     titleImage.style.display ='none';
     scoreCounter.style.display='block';
     document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('timer').style.display = 'block';
+    countdown(5);
 }
 
 let s = 0;
@@ -248,4 +250,28 @@ document.onkeydown = function(event){
         }
     }
     return true;
+}
+
+//timer
+function countdown(minutes) {
+    let seconds = 60;
+    let mins = minutes
+    function tick() {
+        let timer = document.getElementById("timer");
+        let current_minutes = mins-1
+        seconds--;
+        timer.innerHTML = current_minutes.toString() + ":" + (seconds < 10 ? "0" : "") + String(seconds);
+        if( seconds > 0 ) {
+            setTimeout(tick, 1000);
+        } else {
+            if(mins > 1){
+                countdown(mins-1);           
+            }
+        }
+    }
+    tick();
+
+    if(minutes == 0 && seconds == 0){
+        
+    }
 }

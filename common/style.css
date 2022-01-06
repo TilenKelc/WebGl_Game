@@ -54,12 +54,12 @@ html {
 }
 
 #timer{
-
+  display: none;
   margin: 0.5em 0;
   padding: 0.8em 2.2em;
   text-align: center;
   position: relative;
-  top: 50%;
+  top: 10px;
 }
 
 #back {
