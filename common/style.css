@@ -49,6 +49,19 @@ html {
   font-size: 1.4em;
 }
 
+.flex{
+  display: flex;
+}
+
+#timer{
+
+  margin: 0.5em 0;
+  padding: 0.8em 2.2em;
+  text-align: center;
+  position: relative;
+  top: 50%;
+}
+
 #back {
   background: #ffffff;
   border-radius: 0.4em;

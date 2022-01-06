@@ -247,5 +247,5 @@ document.onkeydown = function(event){
             muteButton.style.background = "url('https://img.icons8.com/ios/50/000000/mute--v2.png')";
         }
     }
-    return false;
+    return true;
 }
