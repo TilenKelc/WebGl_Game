@@ -146,8 +146,15 @@ class App extends Application {
         const dy = e.movementY;
 
         let heightChange = dy * c.mouseSensitivity;
-        //console.log(c.height -= heightChange)
-        c.height -= heightChange;        
+        if(heightChange < 0){
+            if(c.height < 3){
+                c.height -= heightChange;  
+            }
+        }else{
+            if(c.height > -3){
+                c.height -= heightChange;  
+            }
+        }
 
         let yawChange = dx * c.mouseSensitivity;
         c.yaw -= yawChange;
@@ -166,7 +173,7 @@ class App extends Application {
         let scale = c.distance;
 
         scale += e.deltaY * -0.01;
-        c.distance = Math.min(Math.max(5, scale), 200);
+        c.distance = Math.min(Math.max(7, scale), 20);
     }
 
     mouseClickHandler(e){

@@ -17,10 +17,8 @@ export class Camera extends Node {
         this.lastHeight = this.height;
 
         this.yaw = 0;
-        this.outOfBounds = false;
 
         this.projection = mat4.create();
-        this.view = mat4.create();
         this.updateProjection();
     }
 
@@ -54,15 +52,10 @@ export class Camera extends Node {
         mat4.multiply(c.matrix, c.matrix, rotYMatrix);
 
         let pitch = -Math.tan(c.height / c.distance);
+        let rotXMatrix = mat4.create();
+        mat4.fromXRotation(rotXMatrix, pitch);
+        mat4.multiply(c.matrix, c.matrix, rotXMatrix);
 
-        if(pitch > -0.5 && pitch < 0.5){
-            let rotXMatrix = mat4.create();
-            mat4.fromXRotation(rotXMatrix, pitch);
-            mat4.multiply(c.matrix, c.matrix, rotXMatrix);
-            c.outOfBounds = false; 
-        }else{
-            c.outOfBounds = true;
-        }
         //console.log(c.outOfBounds);
 
 
