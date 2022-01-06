@@ -180,6 +180,7 @@ class App extends Application {
         if (!this.boxManager.countDown && this.mouseLock) {
             this.boxManager.drop = true;
             this.boxManager.countDown = true;
+            addPoints();
         }
     }
 }
@@ -197,14 +198,17 @@ function showGame() {
     }
     gui.add(app, 'enableMouseLook');
 };
-/*
+
 function restart(){
     const canvas = document.querySelector('canvas');
-    const context = canvas.getContext('2d');
-    context.clearRect(0,0, canvas.width, canvas.height);
-    showGame();
+    const context = canvas.getContext('webgl2');
+    context.clear(context.DEPTH_BUFFER_BIT);
+    document.getElementsByClassName('dg main a')[0].remove();
+    finalScore = 0;
+    startGame();
+    document.getElementById("endScreen").style.display = "none";
+}
 window.restart = restart;
-}*/
 //start screen
 let quitButton = document.getElementById('back');
 let scoreCounter = document.getElementById('scoreCounter');
@@ -217,13 +221,12 @@ function startGame() {
     title.style.display = 'none';
     document.getElementById('startScreen').style.display = 'none';
     document.getElementById('timer').style.display = 'block';
-    countdown(1);
+    countdown(5);
 }
 window.startGame = startGame;
 //score counter
 let finalScore = 0;
-let addPoints = document.getElementById('addPoints');
-addPoints.onclick = function () {
+function addPoints() {
     finalScore += 100;
     score.innerHTML = finalScore;
 }
