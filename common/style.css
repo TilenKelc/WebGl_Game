@@ -39,7 +39,7 @@ html {
   width: 40%;
 }
 
-#startButton {
+.startbutton {
   background: #ffffff;
   border: none;
   border-radius: 0.4em;
@@ -47,6 +47,21 @@ html {
   padding: 0.8em 2.2em;
   cursor: pointer;
   font-size: 1.4em;
+}
+
+#endScreen{
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  align-content: center;
+  text-align: center;
+  
+  background-color: gray;
+  border-radius: 0.4em;
+  margin: 0.5em 0;
+  padding: 0.8em 2.2em;
 }
 
 .flex{
@@ -93,6 +108,10 @@ html {
   left: 50%;
   transform: translateX(-50%);
   
+}
+
+#finalScore{
+  font-size: 2.2em;
 }
 
 .overlay {
