@@ -62,7 +62,8 @@
                 35,
                 36,
                 37,
-                38
+                38,
+                39
             ]
         }
     ],
@@ -654,6 +655,20 @@
                 154.9515838623047,
                 -59.400001525878906
             ]
+        },
+        {
+            "mesh" : 31,
+            "name" : "arrow",
+            "scale" : [
+                0.32423561811447144,
+                0.11990135163068771,
+                1.0201146602630615
+            ],
+            "translation" : [
+                78.54438018798828,
+                -132.56849670410156,
+                86.75067901611328
+            ]
         }
     ],
     "cameras" : [
@@ -829,6 +844,17 @@
             "pbrMetallicRoughness" : {
                 "baseColorTexture" : {
                     "index" : 7
+                },
+                "metallicFactor" : 0,
+                "roughnessFactor" : 0.5
+            }
+        },
+        {
+            "doubleSided" : true,
+            "name" : "Material.004",
+            "pbrMetallicRoughness" : {
+                "baseColorTexture" : {
+                    "index" : 8
                 },
                 "metallicFactor" : 0,
                 "roughnessFactor" : 0.5
@@ -1322,6 +1348,21 @@
                     "material" : 12
                 }
             ]
+        },
+        {
+            "name" : "Cube.018",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 139,
+                        "NORMAL" : 140,
+                        "TANGENT" : 141,
+                        "TEXCOORD_0" : 142
+                    },
+                    "indices" : 143,
+                    "material" : 13
+                }
+            ]
         }
     ],
     "textures" : [
@@ -1356,6 +1397,10 @@
         {
             "sampler" : 0,
             "source" : 7
+        },
+        {
+            "sampler" : 0,
+            "source" : 8
         }
     ],
     "images" : [
@@ -1398,6 +1443,11 @@
             "mimeType" : "image/png",
             "name" : "rope",
             "uri" : "tex/rope.png"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "arrow",
+            "uri" : "tex/arrow.png"
         }
     ],
     "accessors" : [
@@ -2574,6 +2624,46 @@
             "componentType" : 5126,
             "count" : 24,
             "type" : "VEC2"
+        },
+        {
+            "bufferView" : 139,
+            "componentType" : 5126,
+            "count" : 74,
+            "max" : [
+                1.9257155656814575,
+                1,
+                1
+            ],
+            "min" : [
+                -1.9338481426239014,
+                -1,
+                -1
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 140,
+            "componentType" : 5126,
+            "count" : 74,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 141,
+            "componentType" : 5126,
+            "count" : 74,
+            "type" : "VEC4"
+        },
+        {
+            "bufferView" : 142,
+            "componentType" : 5126,
+            "count" : 74,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 143,
+            "componentType" : 5123,
+            "count" : 132,
+            "type" : "SCALAR"
         }
     ],
     "bufferViews" : [
@@ -3271,6 +3361,31 @@
             "buffer" : 0,
             "byteLength" : 192,
             "byteOffset" : 700448
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 888,
+            "byteOffset" : 700640
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 888,
+            "byteOffset" : 701528
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 1184,
+            "byteOffset" : 702416
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 592,
+            "byteOffset" : 703600
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 264,
+            "byteOffset" : 704192
         }
     ],
     "samplers" : [
@@ -3281,7 +3396,7 @@
     ],
     "buffers" : [
         {
-            "byteLength" : 700640,
+            "byteLength" : 704456,
             "uri" : "teren.bin"
         }
     ]
