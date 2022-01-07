@@ -37,7 +37,7 @@ function startGame() {
     title.style.display = 'none';
     document.getElementById('startScreen').style.display = 'none';
     document.getElementById('timer').style.display = 'block';
-    countdown(1);
+    countdown(5);
 }
 window.startGame = startGame;
 
