@@ -1,4 +1,4 @@
-import { mat4, vec3, quat } from '../../lib/gl-matrix-module.js';
+import { mat4, vec3 } from '../../lib/gl-matrix-module.js';
 import { Node } from './Node.js';
 
 export class Box extends Node {

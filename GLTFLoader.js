@@ -12,6 +12,8 @@ import { Scene } from './Scene.js';
 import { Drone } from './Drone.js';
 import { Box } from './Box.js';
 import { SkyBox } from './SkyBox.js';
+import { Arrow } from './Arrow.js';
+import { Target } from './Target.js';
 
 // This class loads all GLTF resources and instantiates
 // the corresponding classes. Keep in mind that it loads
@@ -285,7 +287,7 @@ export class GLTFLoader {
             options.rotation = await this.ToEulerAngles(options.rotation);
         }
         
-        if(options.name == "drone"){
+        if(options.name == "Drone"){
             const node = new Drone(options);
             this.cache.set(gltfSpec, node);
             return node;
@@ -293,8 +295,16 @@ export class GLTFLoader {
             const node = new Box(options);
             this.cache.set(gltfSpec, node);
             return node;
-        }else if(options.name == "Sphere.001"){
+        }else if(options.name == "SkyBox"){
             const node = new SkyBox(options);
+            this.cache.set(gltfSpec, node);
+            return node;
+        }else if(options.name == "Arrow"){
+            const node = new Arrow(options);
+            this.cache.set(gltfSpec, node);
+            return node;
+        }else if(options.name.split(".")[0] == "target"){
+            const node = new Target(options);
             this.cache.set(gltfSpec, node);
             return node;
         }else{

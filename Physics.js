@@ -1,29 +1,50 @@
 import { vec3, mat4 } from '../../lib/gl-matrix-module.js';
+import { Arrow } from './Arrow.js';
 import { Box } from './Box.js';
 import { Camera } from './Camera.js';
 import { Drone } from './Drone.js';
 import { Light } from './Light.js';
 import { SkyBox } from './SkyBox.js';
+import { Target } from './Target.js';
 
 export class Physics {
 
-    constructor(scene) {
+    constructor(scene){
         this.scene = scene;
+        this.arrowCollision = false;
+        this.addScore = false;
+        this.removeItems = [];
     }
 
     update(dt) {
+        this.arrowCollision = false;
+        this.addScore = false;
         this.scene.traverse(node => {
-            if((node instanceof Drone)){
+            if(node instanceof Drone){
                 vec3.scaleAndAdd(node.translation, node.translation, node.velocity, dt);
                 node.updateMatrix();
                 this.scene.traverse(other => {
                     if(!(other instanceof SkyBox) && !(other instanceof Light) && !(other instanceof Camera)){
                         if(other.aabb.min != null && other.aabb.max != null){
                             if(node !== other) {
-                                this.resolveCollision(node, other);
+                                if(other instanceof Arrow){
+                                    this.resolveCollision(node, other, true);
+                                }else{
+                                    this.resolveCollision(node, other, false);
+                                }
                             }
                         }
 
+                    }
+                });
+            }else if(node instanceof Box){
+                this.scene.traverse(other => {
+                    if(!(other instanceof SkyBox) && !(other instanceof Light) && !(other instanceof Camera)){
+                        if(other.aabb.min != null && other.aabb.max != null){
+                            if(node !== other) {
+                                this.resolveCollision(node, other, true);
+                            }
+                        }
                     }
                 });
             }
@@ -40,7 +61,7 @@ export class Physics {
             && this.intervalIntersection(aabb1.min[2], aabb1.max[2], aabb2.min[2], aabb2.max[2]);
     }
 
-    resolveCollision(a, b) {
+    resolveCollision(a, b, check) {
         // Update bounding boxes with global translation.
         const ta = a.getGlobalTransform();
         const tb = b.getGlobalTransform();
@@ -70,7 +91,20 @@ export class Physics {
             max: maxb
         });
 
-        if (!isColliding) {
+        if(!isColliding){
+            return;
+        }
+
+        if(check && isColliding){
+            if((a instanceof Drone) && (b instanceof Arrow)){
+                this.arrowCollision = true;
+                return;
+            }
+
+            if(b instanceof Target){
+                this.addScore = true;
+            }
+            this.removeItems.push(a);
             return;
         }
 

@@ -43,33 +43,15 @@ export class Camera extends Node {
         
         let vec = vec3.create();
         vec3.add(vec, vec3.clone(drone.translation), vec3.fromValues(camX, 0, camZ));
-        let moveMatrix = mat4.create();
-        mat4.fromTranslation(moveMatrix,  vec);
+        let moveMatrix = mat4.fromTranslation(mat4.create(),  vec);
         mat4.multiply(c.matrix, c.matrix, moveMatrix);        
 
-        let rotYMatrix = mat4.create();
-        mat4.fromYRotation(rotYMatrix, c.yaw);
+        let rotYMatrix = mat4.fromYRotation(mat4.create(), c.yaw);
         mat4.multiply(c.matrix, c.matrix, rotYMatrix);
 
         let pitch = -Math.tan(c.height / c.distance);
-        let rotXMatrix = mat4.create();
-        mat4.fromXRotation(rotXMatrix, pitch);
+        let rotXMatrix = mat4.fromXRotation(mat4.create(), pitch);
         mat4.multiply(c.matrix, c.matrix, rotXMatrix);
-
-        //console.log(c.outOfBounds);
-
-
-        /*
-        var rotXMatrix = mat4.create();
-        mat4.fromYRotation(rotXMatrix, c.pitch);
-
-        var rotXMatrix = mat4.create();
-        mat4.fromXRotation(rotXMatrix, -c.pitch);
-        mat4.multiply(c.matrix, c.matrix, rotXMatrix);
-        */
-        //console.log(c.matrix[12], c.matrix[13], c.matrix[14])
-
-        //mat4.lookAt(c.matrix, vec, vec)
     }
 }
 
