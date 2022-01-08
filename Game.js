@@ -17,6 +17,7 @@ import { Target } from "./Target.js";
 export class App extends Application {
   constructor(canvas) {
     super(canvas);
+    this.canvas = canvas;
     this.finalScore = 0;
     this.score = document.getElementById("score");
   }
@@ -181,6 +182,9 @@ export class App extends Application {
     } else {
       this.mouseLock = false;
       this.canvas.removeEventListener("mousemove", this.mousemoveHandler);
+      this.canvas.addEventListener("click", ()=>{
+        this.enableMouseLook();
+      })
     }
   }
 
