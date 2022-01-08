@@ -12,7 +12,6 @@ function restart() {
   const canvas = document.querySelector("canvas");
   const context = canvas.getContext("webgl2");
   context.clear(context.DEPTH_BUFFER_BIT);
-  document.getElementsByClassName("dg main a")[0].remove();
   finalScore = 0;
   startGame();
   document.getElementById("endScreen").style.display = "none";
@@ -29,7 +28,7 @@ function startGame() {
   title.style.display = "none";
   document.getElementById("startScreen").style.display = "none";
   document.getElementById("timer").style.display = "block";
-  countdown(5);
+  countdown(1);
 }
 window.startGame = startGame;
 
