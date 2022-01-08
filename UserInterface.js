@@ -1,19 +1,11 @@
 import { App } from "./Game.js";
-import { GUI } from "../../lib/dat.gui.module.js";
 
 let app;
 function showGame() {
   const canvas = document.querySelector("canvas");
   canvas.style.background = "none";
   app = new App(canvas);
-  const gui = new GUI();
-  for (let i = 0; i < 4; i++) {
-    gui.addColor(app.lights[i], "ambientColor");
-    gui.addColor(app.lights[i], "diffuseColor");
-    gui.addColor(app.lights[i], "specularColor");
-    gui.add(app.lights[i], "shininess", 0.0, 1000.0);
-  }
-  gui.add(app, "enableMouseLook");
+  app.enableMouseLook();
 }
 
 function restart() {
@@ -95,6 +87,7 @@ function countdown(minutes) {
     if (timer.innerHTML == "0:00") {
       document.getElementById("endScreen").style.display = "block";
       document.getElementById("finalScore").innerHTML = app.finalScore;
+      app.enableMouseLook();
       score.innerHTML = 0;
       document.exitPointerLock();
     }

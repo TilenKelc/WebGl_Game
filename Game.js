@@ -1,8 +1,6 @@
 import { Application } from "../../common/engine/Application.js";
 import { mat4, vec3 } from "../../lib/gl-matrix-module.js";
 
-import { GUI } from "../../lib/dat.gui.module.js";
-
 import { GLTFLoader } from "./GLTFLoader.js";
 import { Camera } from "./Camera.js";
 import { Renderer } from "./Renderer.js";
@@ -28,7 +26,6 @@ export class App extends Application {
     this.keydownHandler = this.keydownHandler.bind(this);
     this.keyupHandler = this.keyupHandler.bind(this);
     this.mouseZoomHandler = this.mouseZoomHandler.bind(this);
-    this.mouseClickHandler = this.mouseClickHandler.bind(this);
     this.mouseLock = false;
     this.keys = {};
 
@@ -40,24 +37,6 @@ export class App extends Application {
     document.addEventListener("keyup", this.keyupHandler);
     document.addEventListener("wheel", this.mouseZoomHandler);
     document.addEventListener("click", this.mouseClickHandler);
-
-    this.manager = new Manager();
-    let lightLocations = [
-      [-5, -5],
-      [-5, 5],
-      [-5, 5],
-      [5, -5],
-    ];
-    this.lights = [];
-    for (let i = 0; i < 4; i++) {
-      let light = new Light();
-      mat4.fromTranslation(light.matrix, [
-        lightLocations[i][0],
-        5,
-        lightLocations[i][1],
-      ]);
-      this.lights.push(light);
-    }
   }
 
   async start() {
@@ -76,8 +55,18 @@ export class App extends Application {
     this.camera = new Camera();
     this.scene.addNode(this.camera);
 
+    this.manager = new Manager();
+    let lightLocations = [
+      [-5, -5],
+      [5, 5],
+      [-5, 5],
+      [5, -5],
+    ];
+    this.lights = [];
     for (let i = 0; i < 4; i++) {
-      this.scene.addNode(this.lights[i]);
+      let light = new Light();
+      mat4.fromTranslation(light.matrix, [lightLocations[i][0], 5, lightLocations[i][1]]);
+      this.scene.addNode(light);
     }
 
     this.drone = null;
@@ -105,7 +94,6 @@ export class App extends Application {
     this.scene.removeNode(arrow);
 
     this.physics = new Physics(this.scene);
-    console.log(this.scene);
   }
 
   update() {
@@ -113,27 +101,23 @@ export class App extends Application {
     const dt = (this.time - this.startTime) * 0.001;
     this.startTime = this.time;
 
-    if (this.mouseLock) {
+    if(this.mouseLock){
       if (this.drone) {
-        //let distance = vec3.distance(this.drone.translation, vec3.fromValues(0, 0, 0));
         this.drone.update(dt, this.keys, this.camera);
         this.camera.update(this.drone);
       }
-
+  
       if (this.manager) {
-        this.manager.update();
-
+        this.manager.update(dt);
+  
         if (this.manager.addArrow) {
           this.scene.addNode(this.arrow);
           this.manager.addArrow = false;
         }
-
-        this.arrow.update(
-          dt,
-          mat4.getTranslation(vec3.create(), this.manager.currentTarget.matrix)
-        );
+  
+        this.arrow.update(dt, mat4.getTranslation(vec3.create(), this.manager.currentTarget.matrix));
       }
-
+  
       if (this.physics) {
         this.physics.update(dt);
         if (this.physics.arrowCollision) {
@@ -141,17 +125,18 @@ export class App extends Application {
           this.manager.addArrow = true;
           this.manager.setTarget = true;
         }
-
+  
         if (this.physics.addScore) {
           this.addPoints();
         }
-
+  
         this.physics.removeItems.forEach((element) => {
           this.scene.removeNode(element);
           this.physics.removeItems.pop(element);
         });
       }
     }
+    
   }
 
   render() {
@@ -222,13 +207,6 @@ export class App extends Application {
 
     scale += e.deltaY * 0.01;
     c.distance = Math.min(Math.max(7, scale), 20);
-  }
-
-  mouseClickHandler(e) {
-    if (!this.manager.countDown && this.mouseLock) {
-      this.manager.drop = true;
-      this.manager.countDown = true;
-    }
   }
 
   //score counter

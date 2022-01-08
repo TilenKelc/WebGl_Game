@@ -1,4 +1,4 @@
-import { mat4, vec3, quat } from '../../lib/gl-matrix-module.js';
+import { mat4, vec3 } from '../../lib/gl-matrix-module.js';
 import { Node } from './Node.js';
 
 export class Drone extends Node{
@@ -7,7 +7,7 @@ export class Drone extends Node{
         super(options);
 
         this.velocity = vec3.set(vec3.create(), 0, 0, 0);
-        this.rotateSensitivity = 1;
+        this.rotateSensitivity = 1.5;
         this.maxSpeed = 10;
         this.friction = 0.2;
         this.acceleration = 20;
@@ -19,8 +19,6 @@ export class Drone extends Node{
 
         this.startRoll = this.degreesToRadians(0);
         this.roll = this.startRoll;
-
-        this.battery = 100;
     }
 
     update(dt, keys){
@@ -73,45 +71,17 @@ export class Drone extends Node{
                 c.rotation[0] = c.pitch;
             }
         }
-        
-        //  Right
-        if(keys['KeyD']){            
-            if(c.roll > c.startRoll - c.maxTilt){
-                c.roll -= dt * c.rotateSensitivity;
-                c.rotation[2] = c.roll;
-            }
-            vec3.add(acc, acc, right);
-        }else{
-            if(c.roll < c.startRoll){
-                c.roll += dt * c.rotateSensitivity;
-                c.rotation[2] = c.roll;
-            }
-        }
 
         // Left
-        if(keys['KeyA']){
-            if(c.roll < c.startRoll + c.maxTilt){
-                c.roll += dt * c.rotateSensitivity;
-                c.rotation[2] = c.roll;
-            }
-            vec3.sub(acc, acc, right);
-        }else{
-            if(c.roll > c.startRoll){
-                c.roll -= dt * c.rotateSensitivity;
-                c.rotation[2] = c.roll;
-            }
-        }
-
-        // Left rotation
-        if(keys['KeyQ']){ 
+        if(keys['KeyA']){ 
             c.rotation[1] += dt * c.rotateSensitivity;
             const pi = Math.PI;
             const twopi = pi * 2;
             c.rotation[1] = ((c.rotation[1] % twopi) + twopi) % twopi;
         }
         
-        // Right rotation
-        if(keys['KeyE']){
+        // Right
+        if(keys['KeyD']){
             c.rotation[1] -= dt * c.rotateSensitivity;
             const pi = Math.PI;
             const twopi = pi * 2;

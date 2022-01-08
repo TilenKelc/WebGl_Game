@@ -1,10 +1,7 @@
 import { vec3, mat4 } from '../../lib/gl-matrix-module.js';
 import { Arrow } from './Arrow.js';
 import { Box } from './Box.js';
-import { Camera } from './Camera.js';
 import { Drone } from './Drone.js';
-import { Light } from './Light.js';
-import { SkyBox } from './SkyBox.js';
 import { Target } from './Target.js';
 
 export class Physics {
@@ -24,26 +21,21 @@ export class Physics {
                 vec3.scaleAndAdd(node.translation, node.translation, node.velocity, dt);
                 node.updateMatrix();
                 this.scene.traverse(other => {
-                    if(!(other instanceof SkyBox) && !(other instanceof Light) && !(other instanceof Camera)){
-                        if(other.aabb.min != null && other.aabb.max != null){
-                            if(node !== other) {
-                                if(other instanceof Arrow){
-                                    this.resolveCollision(node, other, true);
-                                }else{
-                                    this.resolveCollision(node, other, false);
-                                }
+                    if(other.aabb.min != null && other.aabb.max != null){
+                        if(node !== other) {
+                            if(other instanceof Arrow){
+                                this.resolveCollision(node, other, true);
+                            }else{
+                                this.resolveCollision(node, other, false);
                             }
                         }
-
                     }
                 });
             }else if(node instanceof Box){
                 this.scene.traverse(other => {
-                    if(!(other instanceof SkyBox) && !(other instanceof Light) && !(other instanceof Camera)){
-                        if(other.aabb.min != null && other.aabb.max != null){
-                            if(node !== other) {
-                                this.resolveCollision(node, other, true);
-                            }
+                    if(other.aabb.min != null && other.aabb.max != null){
+                        if(node !== other) {
+                            this.resolveCollision(node, other, true);
                         }
                     }
                 });

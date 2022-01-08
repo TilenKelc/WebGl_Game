@@ -1,5 +1,4 @@
-import { mat4, vec3, quat } from '../../lib/gl-matrix-module.js';
-import { Arrow } from './Arrow.js';
+import { vec3 } from '../../lib/gl-matrix-module.js';
 import { Box } from './Box.js';
 
 export class Manager {
@@ -14,7 +13,7 @@ export class Manager {
         this.addArrow = false;
     }
 
-    update(){
+    update(dt){
         const c = this;
 
         if(c.setTarget){
@@ -24,7 +23,7 @@ export class Manager {
         }
 
         c.boxes.forEach(function(box) {
-            box.update();
+            box.update(dt);
         });
     }
 

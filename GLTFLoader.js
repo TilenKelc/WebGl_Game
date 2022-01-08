@@ -1,4 +1,4 @@
-import { mat4, vec3, quat } from '../../lib/gl-matrix-module.js';
+import { vec3 } from '../../lib/gl-matrix-module.js';
 import { BufferView } from './BufferView.js';
 import { Accessor } from './Accessor.js';
 import { Sampler } from './Sampler.js';
@@ -11,7 +11,6 @@ import { Node } from './Node.js';
 import { Scene } from './Scene.js';
 import { Drone } from './Drone.js';
 import { Box } from './Box.js';
-import { SkyBox } from './SkyBox.js';
 import { Arrow } from './Arrow.js';
 import { Target } from './Target.js';
 
@@ -296,7 +295,9 @@ export class GLTFLoader {
             this.cache.set(gltfSpec, node);
             return node;
         }else if(options.name == "SkyBox"){
-            const node = new SkyBox(options);
+            const node = new Node(options);
+            node.aabb.max = null;
+            node.aabb.min = null;
             this.cache.set(gltfSpec, node);
             return node;
         }else if(options.name == "Arrow"){
@@ -305,6 +306,11 @@ export class GLTFLoader {
             return node;
         }else if(options.name.split(".")[0] == "target"){
             const node = new Target(options);
+            this.cache.set(gltfSpec, node);
+            return node;
+        }else if(options.name.split(".")[0] == "border"){
+            const node = new Node(options);
+            node.mesh = null;
             this.cache.set(gltfSpec, node);
             return node;
         }else{
