@@ -37,7 +37,7 @@ function startGame() {
     title.style.display = 'none';
     document.getElementById('startScreen').style.display = 'none';
     document.getElementById('timer').style.display = 'block';
-    countdown(5);
+    countdown(1);
 }
 window.startGame = startGame;
 
@@ -90,6 +90,7 @@ function countdown(minutes) {
             document.getElementById("endScreen").style.display = "block";
             document.getElementById("finalScore").innerHTML = app.finalScore;
             score.innerHTML = 0;
+            document.exitPointerLock();
             }
         
     }

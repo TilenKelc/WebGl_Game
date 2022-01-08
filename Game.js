@@ -142,7 +142,7 @@ export class App extends Application {
         }
 
         if (this.physics.addScore) {
-          //addPoints(); <------ no workie
+          this.addPoints();
         }
 
         this.physics.removeItems.forEach((element) => {
@@ -224,15 +224,12 @@ export class App extends Application {
     if (!this.manager.countDown && this.mouseLock) {
       this.manager.drop = true;
       this.manager.countDown = true;
-      /* a je ta funkcija tista k spusti box?
-      this.addPoints;
-      */
     }
   }
 
   //score counter
   addPoints() {
     this.finalScore += 100;
-    this.score.innerHTML = finalScore;
+    this.score.innerHTML = this.finalScore;
   }
 }

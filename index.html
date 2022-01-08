@@ -32,7 +32,7 @@
     <div>
         <div id="startScreen" class="startscreen">
             <button id="startButton" class="startbutton" onclick="startGame()">START</button>
-            <p>To move around use <b>WASD</b>, <b>left-click</b> to drop boxes and <b>click</b> on the volume icon
+            <p>To move around use <b>WASD</b>, <b>SPACE and LEFT SHIT</b> to go higer or lower, <b>q and e</b> to rotate clockwise or counterclockwise and <b>click</b> on the volume icon
                 to (un)mute or use <b>m</b> on your keyboard.</p>
         </div>
 
@@ -41,7 +41,7 @@
             <div id="finalScore"></div>
             <div id="endButton">
                 <div class="playagain">
-                    <button id="restartButton" class="startbutton" style="font-size: 1em;">PLAY AGAIN</button>
+                    <button id="restartButton" class="startbutton" onclick="restart()" style="font-size: 1em;">PLAY AGAIN</button>
                 </div>
                 <div class="quit">
                     <button class="startbutton" onclick="window.location.href='../../index.html';" style="font-size: 1em;">QUIT</button>
