@@ -75,6 +75,7 @@ html {
   text-align: center;
   position: relative;
   top: 10px;
+  color: white;
 }
 
 #back {
@@ -107,6 +108,7 @@ html {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+  color: wheat;
   
 }
 
